@@ -1,5 +1,5 @@
 
-var properties = {
+let properties = {
 	name: "Hex Deep Learning Code",
 	author: "Michael Smith",
 	description: "This DLC requires base game to function",
@@ -9,21 +9,21 @@ var properties = {
 //Global Constants//
 
 //Game constants
-var BOARD_SIZE = 11;
+const BOARD_SIZE = 11;
 
 //Network constants
-var SIGMOID = true;
-var INPUT_SIZE = 122;
-var TOTAL_LAYERS = 3;
-var LAYER_SIZES = [8, 6, 2];
-var PLAYER = 0; //0-player1, 1-player2
+const SIGMOID = true;
+const INPUT_SIZE = 122;
+const TOTAL_LAYERS = 3;
+const LAYER_SIZES = [8, 6, 2];
+const PLAYER = 0; //0-player1, 1-player2
 
 //Evolution constants
-var GENERATIONS = 5;
-var POP_SIZE = 10;
-var MUTATION_RATE = 0.05;
+const GENERATIONS = 5;
+const POP_SIZE = 10;
+const MUTATION_RATE = 0.05;
 
-var champion;
+let champion;
 
 function init (){
 	console.log("Begin Init");
@@ -32,8 +32,7 @@ function init (){
 	population.populate(POP_SIZE);
 
 	//Evolve the population over a certain number of generations
-	let i = 0;
-	for (i = 0; i < GENERATIONS; i++) {
+	for (let i = 0; i < GENERATIONS; i++) {
 		console.log("Evolving population " + i + "/" + GENERATIONS);
 		population = evolvePopulation(population);
 	}
@@ -57,7 +56,7 @@ function init (){
 	// let high = pop.members[0].fitness;
 	// let highIndex = 0;
 
-	// for (i = 0; i < pop.members.length; i++) {
+	// for (let i = 0; i < pop.members.length; i++) {
 	// 	if (pop.members[i].fitness >= high) {
 	// 		highIndex = i;
 	// 		high = pop.members[i].fitness;
@@ -105,8 +104,7 @@ function main () {
 	let board = clone();
 
 	let input = new Array();
-	let i = 0;
-	for (i = 0; i < board.length; i ++) {
+	for (let i = 0; i < board.length; i ++) {
 		input = input.concat(board[i]);
 	}
 
@@ -140,8 +138,7 @@ Node.prototype.getOutput = function(input) {
 
 
 	//Is this neccesary?
-	let i = 0;
-	for (i = 0; i < input.length; i++) {
+	for (let i = 0; i < input.length; i++) {
 		biasedInputs[i] = input[i];
 	}
 
@@ -151,8 +148,7 @@ Node.prototype.getOutput = function(input) {
 	// console.log("Total inputs: " + biasedInputs.length);
 	// console.log(biasedInputs);
 
-	i = 0;
-	for (i = 0; i < biasedInputs.length; i++) {
+	for (let i = 0; i < biasedInputs.length; i++) {
 		this.sum += biasedInputs[i] * this.weights[i];
 		// console.log("Input: " + biasedInputs[i] + ", Weight: " + this.weights[i]);
 		// console.log("Weighted input: " + biasedInputs[i] * this.weights[i]);
@@ -183,8 +179,7 @@ Node.prototype.getOutput = function(input) {
 function Layer(size, weights) {
 	this.nodes = new Array();
 
-	let i = 0;
-	for (i = 0; i < size; i++) {
+	for (let i = 0; i < size; i++) {
 		this.nodes.push(new Node(weights[i]));
 	}
 
@@ -200,8 +195,7 @@ Layer.prototype.getOutput = function(inputs) {
 	// console.log("Layer inputs:");
 	// console.log(nodeInputs);
 
-	let i = 0;
-	for (i = 0; i < this.nodes.length; i++) {
+	for (let i = 0; i < this.nodes.length; i++) {
 		// console.log(i);
 		// console.log("Inputing into node " + i);
 		// console.log(nodeInputs);
@@ -230,8 +224,7 @@ function Network(inputSize, sizes, weights) {
 Network.prototype.getOutput = function(input) {
 	let inputs = input;
 
-	let i = 0;
-	for(i = 0; i < this.layers.length; i++) {
+	for(let i = 0; i < this.layers.length; i++) {
 		inputs = this.layers[i].getOutput(inputs);
 	}
 
@@ -242,12 +235,9 @@ Network.prototype.getOutput = function(input) {
 Network.prototype.getWeights = function() {
 	let weightArray = new Array();
 
-	let i = 0;
-	for (i = 0; i < this.layers.length; i++) {
-		let j = 0;
-		for (j = 0; j < this.layers[i].nodes.length; j++) {
-			let k = 0;
-			for (k = 0; k < this.layers[i].nodes[j].weights.length; k++) {
+	for (let i = 0; i < this.layers.length; i++) {
+		for (let j = 0; j < this.layers[i].nodes.length; j++) {
+			for (let k = 0; k < this.layers[i].nodes[j].weights.length; k++) {
 				weightArray.push(this.layers[i].nodes[j].weights[k]);
 			}
 		}
@@ -262,13 +252,12 @@ Network.prototype.setWeights = function(weights) {
 	let counter = 0;
 
 	let structuredWeights = new Array();
-	let i = 0; //Layer counter
-	for (i = 0; i < this.sizes.length; i ++) {
+	for (let i = 0; i < this.sizes.length; i ++) {
 		structuredWeights.push(new Array());
 		// console.log("Creating Layer " + i + " of size " + sizes[i]);
 
-		let j = 0; //Node counter
-		for (j = 0; j < this.sizes[i]; j++) {
+		//Iterate Nodes
+		for (le tj = 0; j < this.sizes[i]; j++) {
 			structuredWeights[i].push(new Array());
 			let k = 0; //Weight counter
 			let w = 0; //No. of weights per node
@@ -284,7 +273,7 @@ Network.prototype.setWeights = function(weights) {
 			// console.log("Creating node with " + w + " inputs");
 			
 
-			for (k = 0; k < w; k++) {
+			for (let k = 0; k < w; k++) {
 				structuredWeights[i][j].push(weights[counter]);
 				counter++;
 			}
@@ -296,8 +285,7 @@ Network.prototype.setWeights = function(weights) {
 	//Create a new set of layers with new weights
 	this.layers = new Array();
 
-	i = 0;
-	for (i = 0; i < this.sizes.length; i++) {
+	for (let i = 0; i < this.sizes.length; i++) {
 			this.layers.push(new Layer(this.sizes[i], structuredWeights[i]));
 	}
 }
@@ -332,8 +320,7 @@ function evolvePopulation (population) {
 	score(population);
 
 	//Breed new population
-	let i = 0;
-	for (i = 0; i < POP_SIZE; i++) {
+	for (let i = 0; i < POP_SIZE; i++) {
 		let parent1 = roulettePick(population);
 		let parent2;
 		let finished = false;
@@ -355,10 +342,8 @@ function evolvePopulation (population) {
 	
 //Assigns a score to each member by fighting them against each other
 function score (population) {
-	let i = 0;
-	for (i = 0; i < population.members.length; i++) {
-		let j = 0;
-		for (j = 0; j < population.members.length; j++) {
+	for (let i = 0; i < population.members.length; i++) {
+		for (let j = 0; j < population.members.length; j++) {
 			if (j != i) {
 				//Each AI plays every other AI twice, as player 1 and player 2
 				// console.log("It's AI #" + i + " vs AI #" + j);
@@ -375,11 +360,9 @@ function fight(player1, player2) {
 
 	//Create array of size 11x11 to serve as the hex board
 	let gameBoard = new Array();
-	let i = 0;
-	for (i = 0; i < BOARD_SIZE; i++) {
+	for (let i = 0; i < BOARD_SIZE; i++) {
 		gameBoard.push(new Array());
-		let j = 0;
-		for (j = 0; j < BOARD_SIZE; j++) {
+		for (let j = 0; j < BOARD_SIZE; j++) {
 			gameBoard[i][j] = 0;
 		}
 	}
@@ -394,8 +377,7 @@ function fight(player1, player2) {
 	while (!finished) {
 		//Convert board array into 1-d array for network
 		let input = new Array();
-		let i = 0;
-		for (i = 0; i < gameBoard.length; i++) {
+		for (let i = 0; i < gameBoard.length; i++) {
 			input = input.concat(gameBoard[i]);
 		}
 
@@ -456,8 +438,7 @@ function roulettePick (pop) {
 	let spinner = new Array();
 	pop.sort();
 
-	let i = 0;
-	for (i = 0; i < pop.members.length; i++) {
+	for (let i = 0; i < pop.members.length; i++) {
 		for (let j = 0; j < Math.pow(pop.members.length - i, 3) / 2; j++) {
 			spinner.push(i);
 		}
@@ -472,8 +453,7 @@ function roulettePick (pop) {
 function breed(mem1, mem2) {
 	let newWeights = new Array();
 
-	let i = 0;
-	for (i = 0; i < mem1.network.getWeights().length; i++) {
+	for (let i = 0; i < mem1.network.getWeights().length; i++) {
 		if (Math.floor(Math.random() * 2) == 0) {
 			newWeights.push(mem1.network.getWeights()[i]);
 		}
@@ -490,8 +470,7 @@ function breed(mem1, mem2) {
 function mutate(member) {
 	let newWeights = member.network.getWeights();
 
-	let i = 0;
-	for (i = 0; i < newWeights.length; i++) {
+	for (let i = 0; i < newWeights.length; i++) {
 		if (Math.random() < MUTATION_RATE) {
 			newWeights[i] = generateWeight();
 		}
@@ -508,20 +487,18 @@ function Population() {
 
 //Fills a population with random members
 Population.prototype.populate = function(size) {
-	let i = 0;
-	for (i = 0; i < size; i++) {
+	for (let i = 0; i < size; i++) {
 		//Create a random array of weights (-1 < weight < 1)
 		let randomWeights = new Array();
 
 		let totalWeights = (INPUT_SIZE + 1) * LAYER_SIZES[0]; //Accounting for bias input
-		let j = 0;
-		for (j = 1; j < TOTAL_LAYERS; j++) {
+		for (let j = 1; j < TOTAL_LAYERS; j++) {
 				totalWeights += LAYER_SIZES[j] * (LAYER_SIZES[j - 1] + 1); //Accounting for bias input
 		}
 
 		// console.log("Total Weights: " + totalWeights);
 
-		for (j = 0; j < totalWeights; j++) {
+		for (let j = 0; j < totalWeights; j++) {
 			let randomWeight = generateWeight(); //Random decimal from -1 to 1
 			randomWeights.push(randomWeight);
 		}
@@ -538,12 +515,10 @@ Population.prototype.sort = function() {
 	//Selection sort
 	let highIndex = 0;
 
-	let i = 0;
-	for (i = 0; i < this.members.length - 1; i++) {
+	for (let i = 0; i < this.members.length - 1; i++) {
 		let high = this.members[i].fitness;
 		highIndex = i;
-		let j = 0;
-		for (j = i; j < this.members.length; j++) {
+		for (let j = i; j < this.members.length; j++) {
 			if (this.members[j].fitness >= high) {
 				high = this.members[j].fitness;
 				highIndex = j;

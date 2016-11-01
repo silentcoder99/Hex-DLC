@@ -5,6 +5,8 @@
 #include "Game.h"
 #include "GAlgorithm.h"
 
+#include "FileIO.h"
+
 	int main() {
 
 		Population pop = Population(POP_SIZE);
@@ -23,6 +25,8 @@
 			std::cout << pop.getMember(i).m_score << ", ";
 		}
 
+		
+
 		//Network Test
 		/*Network net = Network(2, { 2 }, 1);
 		net.setWeights({ 1, 0, 0, 0.5, 1.341597, 0, 101, 7.4, 0 });
@@ -36,6 +40,13 @@
 
 		std::cout << "Network output: " << net.getOutput({ 0.5, 0.5 })[0] << "\n";
 		std::cout << "Total Weights: " << net.getNumWeights() << "\n";*/
+
+
+		// Save algorithm of champion
+		//std::vector<double> wieghts = pop.getMember(0).m_network.getWeights();
+		//std::string serializedWeights = FileIO::serializeDoubleVector(wieghts);
+		//FileIO::saveToFile("Champ.txt", serializedWeights);
+
 
 		std::cout << "\n";
 		std::getchar();

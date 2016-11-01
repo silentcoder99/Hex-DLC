@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="GAlgorithm.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MyRandom.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileIO.h" />
     <ClInclude Include="GAlgorithm.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="MyRandom.h" />

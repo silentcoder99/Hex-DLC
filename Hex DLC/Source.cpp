@@ -44,8 +44,7 @@
 
 		// Save algorithm of champion
 		//std::vector<double> wieghts = pop.getMember(0).m_network.getWeights();
-		//std::string serializedWeights = FileIO::serializeDoubleVector(wieghts);
-		//FileIO::saveToFile("Champ.txt", serializedWeights);
+		//FileIO::saveWeightsToFile("Champ.txt", wieghts);
 
 
 		std::cout << "\n";

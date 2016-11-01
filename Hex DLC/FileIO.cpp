@@ -2,20 +2,28 @@
 #include <sstream>
 #include <fstream>
 
-std::string FileIO::serializeDoubleVector(std::vector<double> vector) {
-	std::stringstream ss;
-	for (auto element : vector) {
-		ss << element << std::endl;
-	}
-	return ss.str();
-}
-
-void FileIO::saveToFile(std::string filename, std::string content) {
+void FileIO::saveWeightsToFile(std::string filename, std::vector<double> vector) {
 	std::ofstream outFile(filename);
 
 	if (outFile.is_open()) {
-		outFile << content;
+		for (auto element : vector) {
+			outFile << element << std::endl;
+		}
 		outFile.close();
 	}
 
+}
+
+std::vector<double> FileIO::readWeightsFromFile(std::string filename) {
+	std::vector<double> weights;
+	std::ifstream inFile(filename);
+
+	if (inFile.is_open()) {
+		std::string line;
+		while (std::getline(inFile, line, '\n')) {
+			weights.push_back(std::stod(line));
+		}
+	}
+
+	return weights;
 }

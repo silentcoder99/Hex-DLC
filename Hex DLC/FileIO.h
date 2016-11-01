@@ -4,7 +4,7 @@
 
 class FileIO {
 public:
-	static void saveToFile(std::string filename, std::string content);
+	static void saveWeightsToFile(std::string filename, std::vector<double> vector);
+	static std::vector<double> readWeightsFromFile(std::string filename);
 
-	static std::string serializeDoubleVector(std::vector<double> vector);
 };

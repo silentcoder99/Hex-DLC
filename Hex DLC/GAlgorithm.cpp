@@ -97,22 +97,14 @@ void Population::scoreMembers() {
 
 int Population::partitionMembers(int start, int end) {
 	int low = start;
-	int high = start;
+	int pivot = m_members[end].m_score;
 
-	if (start == end) {
-		return -1;
-	}
-
-	for (int i = 0; i < end - start; i++) {
-		if (m_members[high].m_score > m_members[end].m_score) {
-			high++;
-		}
-		else {
+	for (int i = start; i < end; i++) {
+		if (m_members[i].m_score <= pivot) {
 			Member temp = m_members[low];
-			m_members[low] = m_members[high];
-			m_members[high] = temp;
+			m_members[low] = m_members[i];
+			m_members[i] = temp;
 			low++;
-			high++;
 		}
 	}
 
@@ -125,9 +117,8 @@ int Population::partitionMembers(int start, int end) {
 
 void Population::sortMembers(int start, int end) {
 	//Using the quicksort algorithm
-	int pivot = partitionMembers(start, end);
-
-	while (pivot != -1) {
+	if (start < end) {
+		int pivot = partitionMembers(start, end);
 		sortMembers(start, pivot - 1);
 		sortMembers(pivot + 1, end);
 	}

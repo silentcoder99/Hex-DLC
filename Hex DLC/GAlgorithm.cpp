@@ -123,7 +123,7 @@ int Population::partitionMembers(int start, int end) {
 	return low;
 }
 
-void Population::sortMembers(int start = 0, int end = (POP_SIZE - 1)) {
+void Population::sortMembers(int start, int end) {
 	//Using the quicksort algorithm
 	int pivot = partitionMembers(start, end);
 

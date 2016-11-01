@@ -32,7 +32,7 @@ class Population {
 	Member tournamentSelect();
 	
 public:
-	void sortMembers(int, int);
+	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	std::vector<Member> m_members;
 
 	int startMatch(Member, Member);

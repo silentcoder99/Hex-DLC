@@ -108,8 +108,35 @@ function main () {
 		return hex(x, y);
 	}
 	else {
-		return hex(convertOutput(move[0]), convertOutput(move[1]));
+		return findClosestEmptyHex(convertOutput(move[0]), convertOutput(move[1]));
 	}
+}
+
+function distanceHeuristic(x1, y1, x2, y2){
+	return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
+}
+
+function findClosestEmptyHex(x, y){
+	let closestX = 200;
+	let closestY = 200;
+	let closestDistance = 200;
+	
+	for (let prospectiveX = 0; prospectiveX < BOARD_SIZE; prospectiveX++){
+		for (let prospectiveY = 0; prospectiveY<BOARD_SIZE; prospectiveY++){
+			
+			if (empty(prospectiveX, prospectiveY)){
+				
+				if(distanceHeuristic(prospectiveX, prospectiveY, x, y) < closestDistance){
+					
+					closestX = prospectiveX;
+					closestY = prospectiveY;
+					closestDistance = distanceHeuristic(prospectiveX, prospectiveY, x, y);
+				}
+			}
+		}
+	}
+	
+	return hex(closestX, closestY)
 }
 
 //Network code//

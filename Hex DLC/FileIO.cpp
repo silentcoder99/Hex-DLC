@@ -7,7 +7,7 @@ void FileIO::saveWeightsToFile(std::string filename, std::vector<double> vector)
 
 	if (outFile.is_open()) {
 		for (auto element : vector) {
-			outFile << element << std::endl;
+			outFile << element << ",";
 		}
 		outFile.close();
 	}
@@ -20,8 +20,10 @@ std::vector<double> FileIO::readWeightsFromFile(std::string filename) {
 
 	if (inFile.is_open()) {
 		std::string line;
-		while (std::getline(inFile, line, '\n')) {
-			weights.push_back(std::stod(line));
+		while (std::getline(inFile, line, ',')) {
+			if (line.empty()) {
+				weights.push_back(std::stod(line));
+			}
 		}
 	}
 

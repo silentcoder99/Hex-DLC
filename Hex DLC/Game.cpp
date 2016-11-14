@@ -37,44 +37,39 @@ int Board::getValue(int x, int y) {
 	return m_board[x][y];
 }
 
+// returns distance between points
+int distanceHeuristic(int x1, int y1, int x2, int y2) {
+	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+}
+
 std::pair<int, int> Board::findNearestEmpty(int x, int y) {
-	std::vector<std::pair<int, int>> searched;
-	std::vector<std::pair<int, int>> toSearch;
-	std::vector<std::pair<int, int>> newToSearch;
+	
+	// Initializes closest position to be very far away
+	int closestX = 200; 
+	int closestY = 200;
+	int closestDistance = 200;
 
-	toSearch.push_back({ x, y });
+	// Iterate board
+	for (int prospectiveX = 0; prospectiveX < BOARD_SIZE; prospectiveX++) {
+		for (int prospectiveY = 0; prospectiveY < BOARD_SIZE; prospectiveY++) {
 
-	while (true) {
+			// Is it empty?
+			if (m_board[prospectiveX][prospectiveY] == 0) {
 
-		newToSearch.clear();
-
-		//Search all hexes to search
-		for (auto searchPos : toSearch) {
-			if (m_board[searchPos.first][searchPos.second] == 0) {
-				return searchPos;
-			}
-			//For each hex being searched, add their valid neighbours to be searched next cycle
-			else {
-				searched.push_back(searchPos);
-
-				std::vector<Hex> neighbours = getNeighbours(searchPos.first, searchPos.second);
-
-				for (auto neighbour : neighbours) {
-
-					if (std::find(searched.begin(), searched.end(), neighbour.m_position) == searched.end() &&
-						std::find(toSearch.begin(), toSearch.end(), neighbour.m_position) == toSearch.end() &&
-						std::find(newToSearch.begin(), newToSearch.end(), neighbour.m_position) == newToSearch.end()) {
-
-						newToSearch.push_back(neighbour.m_position);
-					}
+				// is it closer than we were?
+				if (distanceHeuristic(prospectiveX, prospectiveY, x, y) < closestDistance) {
+					
+					// Closest so far! save it
+					closestX = prospectiveX;
+					closestY = prospectiveY;
+					closestDistance = distanceHeuristic(prospectiveX, prospectiveY, x, y);
 				}
 			}
 		}
-		if (newToSearch.size() == 0) {
-			return{ -1, -1 };
-		}
-		toSearch = newToSearch;
 	}
+	
+	// Return closest tile
+	return std::pair<int, int>(closestX, closestY);
 }
 
 std::vector<Hex> Board::getNeighbours(int x, int y) {

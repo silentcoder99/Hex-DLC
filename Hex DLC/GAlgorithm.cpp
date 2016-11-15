@@ -35,7 +35,7 @@ int Population::startMatch(Member player1, Member player2) {
 					int value = rawBoard[-j + BOARD_SIZE - 1][-i + BOARD_SIZE - 1];
 
 					//Swap values so they see their moves as '1'
-					if (value == 1) {value = 2; }
+					if (value == 1) { value = 2; }
 					else if (value == 2) { value = 1; }
 
 					input.push_back(value);
@@ -46,35 +46,27 @@ int Population::startMatch(Member player1, Member player2) {
 
 		std::vector<double> output;
 
-		//Player 1
-		if (board.getCurrentPlayer() == 1) {
-			output = player1.m_network.getOutput(input);
+		// Get Output
+		output = player1.m_network.getOutput(input);
 
-			//Convert from decimal to integer output
-			output[0] = floor(output[0] * BOARD_SIZE);
-			output[1] = floor(output[1] * BOARD_SIZE);
-		}
-		//Player 2
-		else {
-			output = player2.m_network.getOutput(input);
+		//Convert from decimal to integer output
+		output[0] = floor(output[0] * BOARD_SIZE);
+		output[1] = floor(output[1] * BOARD_SIZE);
 
-			//Convert from decimal to integer output
-			output[0] = floor(output[0] * BOARD_SIZE);
-			output[1] = floor(output[1] * BOARD_SIZE);
-
+		if (board.getCurrentPlayer() == 2) {
 			//Reflect player 2's move (as they see everything reflected)
 			output[0] = -output[1] + BOARD_SIZE - 1;
 			output[1] = -output[0] + BOARD_SIZE - 1;
 		}
 
+		Vec2 chosenPosition = Vec2(output[1], output[2]);
 		//If hex is taken, take nearest empty hex
-		if (board.getValue(output[0], output[1]) != 0) {
-			std::pair<int, int> empty = board.findNearestEmpty(output[0], output[1]);
-			output[0] = empty.first;
-			output[1] = empty.second;
+		if (board.getValue(chosenPosition) != 0) {
+			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
+			chosenPosition = emptyPos;
 		}
 
-		board.performMove(output[0], output[1]);
+		board.performMove(chosenPosition);
 
 	}
 	return board.getWinner();

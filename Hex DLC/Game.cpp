@@ -11,8 +11,8 @@ Board::Board() {
 	m_currentPlayer = 1;
 }
 
-Hex::Hex(int x, int y, int value) {
-	m_position = { x, y };
+Hex::Hex(Vec2 pos, int value) {
+	m_position = pos;
 	m_value = value;
 }
 
@@ -20,9 +20,9 @@ boardArray Board::getBoard() {
 	return m_board;
 }
 
-bool Board::performMove(int x, int y) {
-	if (m_board[x][y] == 0) {
-		m_board[x][y] = m_currentPlayer;
+bool Board::performMove(Vec2 pos) {
+	if (getValue(pos) == 0) {
+		setValue(pos, m_currentPlayer);
 		m_currentPlayer = m_currentPlayer == 1 ? 2 : 1; //Toggle the current player between 1 and 2
 		m_numTurns++;
 
@@ -33,53 +33,59 @@ bool Board::performMove(int x, int y) {
 	}
 }
 
-int Board::getValue(int x, int y) {
-	return m_board[x][y];
+int Board::getValue(Vec2 pos) {
+	return m_board[pos.x][pos.y];
+}
+
+void Board::setValue(Vec2 pos, int value) {
+	m_board[pos.x][pos.y] = value;
 }
 
 // returns distance between points
-int distanceHeuristic(int x1, int y1, int x2, int y2) {
-	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+int distanceHeuristic(Vec2 firstPos, Vec2 secondPos) {
+	return firstPos.distance(secondPos);
 }
 
-std::pair<int, int> Board::findNearestEmpty(int x, int y) {
+Vec2 Board::findNearestEmpty(Vec2 position) {
 	
 	// Initializes closest position to be very far away
-	int closestX = 200; 
-	int closestY = 200;
+	Vec2 closestPos(200, 200);
+
 	int closestDistance = 200;
 
 	// Iterate board
 	for (int prospectiveX = 0; prospectiveX < BOARD_SIZE; prospectiveX++) {
 		for (int prospectiveY = 0; prospectiveY < BOARD_SIZE; prospectiveY++) {
+			
+			Vec2 prospecivePosition = Vec2(prospectiveX, prospectiveY);
 
 			// Is it empty?
-			if (m_board[prospectiveX][prospectiveY] == 0) {
+			if (getValue(prospecivePosition) == 0) {
 
+				int distance = distanceHeuristic(prospecivePosition, position);
 				// is it closer than we were?
-				if (distanceHeuristic(prospectiveX, prospectiveY, x, y) < closestDistance) {
+				if (distance < closestDistance) {
 					
 					// Closest so far! save it
-					closestX = prospectiveX;
-					closestY = prospectiveY;
-					closestDistance = distanceHeuristic(prospectiveX, prospectiveY, x, y);
+					closestPos = prospecivePosition;
+					closestDistance = distance;
 				}
 			}
 		}
 	}
 	
 	// Return closest tile
-	return std::pair<int, int>(closestX, closestY);
+	return closestPos;
 }
 
-std::vector<Hex> Board::getNeighbours(int x, int y) {
+std::vector<Hex> Board::getNeighbours(Vec2 pos) {
 	std::vector<Hex> neighbours;
 
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
 			//Check that surrounding values are valid neighbours
-			if (!((x + i < 0) || (x + i > BOARD_SIZE - 1) || (y + j < 0) || (y + j > BOARD_SIZE - 1) || (i == j))) {
-				Hex neighbour = Hex(x + i, y + j, m_board[x + i][y + j]);
+			if (!((pos.x + i < 0) || (pos.x + i > BOARD_SIZE - 1) || (pos.y + j < 0) || (pos.y + j > BOARD_SIZE - 1) || (i == j))) {
+				Hex neighbour = Hex(Vec2(pos.x + i, pos.y + j), m_board[pos.x + i][pos.y + j]);
 				neighbours.push_back(neighbour);
 			}
 		}
@@ -95,12 +101,10 @@ int Board::getCurrentPlayer() {
 	return m_currentPlayer;
 }
 
-bool Board::connected(int x1, int y1, int x2, int y2, std::vector<std::pair<int, int>>& searched) {
-	std::pair<int, int> start = std::pair<int, int>(x1, y1);
-	std::pair<int, int> target = std::pair<int, int>(x2, y2);
-	int startValue = m_board[x1][y1];
+bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>& searched) {
+	int startValue = getValue(start);
 
-	if (m_board[x1][y1] != m_board[x2][y2]) {
+	if (getValue(start) != getValue(target)) {
 		return false;
 	}
 
@@ -110,11 +114,11 @@ bool Board::connected(int x1, int y1, int x2, int y2, std::vector<std::pair<int,
 
 	searched.push_back(start);
 
-	std::vector<Hex> neighbours = getNeighbours(x1, y1);
+	std::vector<Hex> neighbours = getNeighbours(start);
 
 	for (auto neighbour : neighbours) {
 		if (std::find(searched.begin(), searched.end(), neighbour.m_position) == searched.end() && neighbour.m_value == startValue) {
-			if (connected(neighbour.m_position.first, neighbour.m_position.second, x2, y2, searched)) {
+			if (connected(neighbour.m_position, target, searched)) {
 				return true;
 			}
 		}
@@ -129,7 +133,7 @@ int Board::getWinner() {
 		if (m_board[0][i] == 1) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				if (m_board[BOARD_SIZE - 1][j] == 1) {
-					if (connected(0, i, BOARD_SIZE - 1, j)) {
+					if (connected(Vec2(0, i), Vec2(BOARD_SIZE - 1, j))) {
 						return 1;
 					}
 				}
@@ -142,7 +146,7 @@ int Board::getWinner() {
 		if (m_board[i][0] == 2) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				if (m_board[j][BOARD_SIZE - 1] == 2) {
-					if (connected(i, 0, j, BOARD_SIZE - 1)) {
+					if (connected(Vec2(i, 0), Vec2(j, BOARD_SIZE - 1))) {
 						return 2;
 					}
 				}

@@ -78,8 +78,8 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 	return closestPos;
 }
 
-std::vector<Hex> Board::getNeighbours(Vec2 pos) {
-	std::vector<Hex> neighbours;
+std::list<Hex> Board::getNeighbours(Vec2 pos) {
+	std::list<Hex> neighbours;
 
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
@@ -114,7 +114,7 @@ bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>& searched) {
 
 	searched.push_back(start);
 
-	std::vector<Hex> neighbours = getNeighbours(start);
+	std::list<Hex> neighbours = getNeighbours(start);
 
 	for (auto neighbour : neighbours) {
 		if (std::find(searched.begin(), searched.end(), neighbour.m_position) == searched.end() && neighbour.m_value == startValue) {

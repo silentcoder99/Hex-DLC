@@ -46,14 +46,22 @@ int Population::startMatch(Member player1, Member player2) {
 
 		std::vector<double> output;
 
-		// Get Output
-		output = player1.m_network.getOutput(input);
+		if (board.getCurrentPlayer() == 1) {
+			// Get Output
+			output = player1.m_network.getOutput(input);
 
-		//Convert from decimal to integer output
-		output[0] = floor(output[0] * BOARD_SIZE);
-		output[1] = floor(output[1] * BOARD_SIZE);
+			//Convert from decimal to integer output
+			output[0] = floor(output[0] * BOARD_SIZE);
+			output[1] = floor(output[1] * BOARD_SIZE);
+		}
+		else if (board.getCurrentPlayer() == 2) {
+			// Get Output
+			output = player2.m_network.getOutput(input);
 
-		if (board.getCurrentPlayer() == 2) {
+			//Convert from decimal to integer output
+			output[0] = floor(output[0] * BOARD_SIZE);
+			output[1] = floor(output[1] * BOARD_SIZE);
+
 			//Reflect player 2's move (as they see everything reflected)
 			output[0] = -output[1] + BOARD_SIZE - 1;
 			output[1] = -output[0] + BOARD_SIZE - 1;

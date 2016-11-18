@@ -4,8 +4,8 @@
 
 //Genetic parameters
 #define POP_SIZE 10
-#define TOURNAMENT_SIZE 20
-#define ELITISM true
+#define TOURNAMENT_SIZE 2
+#define ELITISM_SIZE = 1; //Number of top AI's to make it to the next generation
 
 //Network parameters
 #define NUM_INPUTS 121
@@ -29,9 +29,10 @@ struct Member {
 class Population {
 	
 	int m_numMembers;
-	Member tournamentSelect();
+	
 	
 public:
+	Member tournamentSelect();
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	std::vector<Member> m_members;
 

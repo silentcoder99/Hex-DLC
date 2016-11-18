@@ -67,7 +67,7 @@ int Population::startMatch(Member player1, Member player2) {
 			output[1] = -output[0] + BOARD_SIZE - 1;
 		}
 
-		Vec2 chosenPosition = Vec2(output[1], output[2]);
+		Vec2 chosenPosition = Vec2(output[0], output[1]);
 		//If hex is taken, take nearest empty hex
 		if (board.getValue(chosenPosition) != 0) {
 			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
@@ -124,14 +124,20 @@ void Population::sortMembers(int start, int end) {
 	}
 }
 
-//Member Population::tournamentSelect() {
-//	MyRandom rnd = MyRandom();
-//	std::vector<Member> theChoosen;
-//	
-//	for (int i = 0; i < TOURNAMENT_SIZE; i++) {
-//		theChoosen.push_back(m_members[rnd.integer(m_numMembers)]);
-//	}
-//}
+Member Population::tournamentSelect() {
+	MyRandom rnd = MyRandom();
+	int bestScore = 0;
+	Member bestMember;
+	
+	for (int i = 0; i < TOURNAMENT_SIZE; i++) {
+		Member choosen = m_members[rnd.integer(m_numMembers)];
+		
+		if (choosen.m_score > bestScore) {
+			bestMember = choosen;
+		}
+	}
+	return bestMember;
+}
 
 Member::Member(): m_network(Network(pow(BOARD_SIZE, 2), LAYER_SIZES, NUM_OUTPUTS)) {
 	m_score = 0;

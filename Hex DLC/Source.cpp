@@ -19,28 +19,14 @@ int main() {
 	}
 	std::cout << "\n";
 
-	weights = pop.getMember(1).m_network.getWeights();
+	Member mutant = Population::mutate(pop.getMember(0));
+	pop.setMember(mutant, 0);
+
+	weights = pop.getMember(0).m_network.getWeights();
 
 	for (auto weight : weights) {
 		std::cout << weight << ", ";
 	}
-	std::cout << "\n";
-
-	std::pair<Member, Member> children = Population::crossover(pop.getMember(0), pop.getMember(1));
-
-	weights = children.first.m_network.getWeights();
-
-	for (auto weight : weights) {
-		std::cout << weight << ", ";
-	}
-	std::cout << "\n";
-
-	weights = children.second.m_network.getWeights();
-
-	for (auto weight : weights) {
-		std::cout << weight << ", ";
-	}
-	std::cout << "\n";
 
 
 	//Network Test

@@ -7,8 +7,8 @@ MyRandom::MyRandom() {
 	m_generator.seed(seed);
 }
 
-double MyRandom::real() {
-	std::uniform_real_distribution<double> distribution(-1, 1);
+double MyRandom::real(double min, double max) {
+	std::uniform_real_distribution<double> distribution(min, max);
 	return distribution(m_generator);
 }
 

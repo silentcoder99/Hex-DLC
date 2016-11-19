@@ -15,6 +15,10 @@ Member Population::getMember(int index) {
 	return m_members[index];
 }
 
+void Population::setMember(Member member, int index) {
+	m_members[index] = member;
+}
+
 int Population::startMatch(Member player1, Member player2) {
 	Board board = Board();
 
@@ -164,4 +168,24 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 
 Member::Member(): m_network(Network(NUM_INPUTS, LAYER_SIZES, NUM_OUTPUTS)) {
 	m_score = 0;
+}
+
+Member Population::mutate(Member member) {
+	MyRandom rnd = MyRandom();
+
+	std::vector<double> weights = member.m_network.getWeights();
+
+	for (int i = 0; i < weights.size(); i++) {
+		if (rnd.real(0, 1) < MUTATION_RATE) {
+			weights[i] = rnd.real(-1, 1);
+		}
+	}
+
+	for (auto weight : weights) {
+		std::cout << weight << ", ";
+	}
+	std::cout << "\n";
+
+	member.m_network.setWeights(weights);
+	return member;
 }

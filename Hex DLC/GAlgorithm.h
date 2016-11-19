@@ -6,12 +6,13 @@
 //Genetic parameters
 #define POP_SIZE 10
 #define TOURNAMENT_SIZE 2
-#define ELITISM_SIZE = 1; //Number of top AI's to make it to the next generation
+#define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
+#define MUTATION_RATE 0.2
 
 //Network parameters
-#define NUM_INPUTS 1
-#define LAYER_SIZES {1}
-#define NUM_OUTPUTS 1
+#define NUM_INPUTS 121
+#define LAYER_SIZES {10}
+#define NUM_OUTPUTS 2
 
 //Evolving artifical genomes for dummies:
 //1. Create an initial random population
@@ -42,6 +43,8 @@ public:
 
 	Population(int);
 	Member getMember(int);
+	void setMember(Member, int);
 
 	static std::pair<Member, Member> crossover(Member, Member);
+	static Member mutate(Member);
 };

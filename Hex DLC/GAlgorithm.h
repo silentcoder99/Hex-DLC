@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Network.h"
+#include "SuperArray.hpp"
 
 //Genetic parameters
 #define POP_SIZE 10
@@ -8,9 +9,9 @@
 #define ELITISM_SIZE = 1; //Number of top AI's to make it to the next generation
 
 //Network parameters
-#define NUM_INPUTS 121
-#define LAYER_SIZES {10}
-#define NUM_OUTPUTS 2
+#define NUM_INPUTS 1
+#define LAYER_SIZES {1}
+#define NUM_OUTPUTS 1
 
 //Evolving artifical genomes for dummies:
 //1. Create an initial random population
@@ -30,7 +31,6 @@ class Population {
 	
 	int m_numMembers;
 	
-	
 public:
 	Member tournamentSelect();
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
@@ -42,4 +42,6 @@ public:
 
 	Population(int);
 	Member getMember(int);
+
+	static std::pair<Member, Member> crossover(Member, Member);
 };

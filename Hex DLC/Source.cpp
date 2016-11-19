@@ -10,21 +10,37 @@
 int main() {
 
 	Population pop = Population(POP_SIZE);
+	std::vector<double> weights;
 
-	pop.scoreMembers();
-
-	for (int i = 0; i < POP_SIZE; i++) {
-		std::cout << pop.getMember(i).m_score << ", ";
+	weights = pop.getMember(0).m_network.getWeights();
+	
+	for (auto weight : weights) {
+		std::cout << weight << ", ";
 	}
-
 	std::cout << "\n";
 
-	pop.sortMembers();
+	weights = pop.getMember(1).m_network.getWeights();
 
-	for (int i = 0; i < POP_SIZE; i++) {
-		std::cout << pop.getMember(i).m_score << ", ";
+	for (auto weight : weights) {
+		std::cout << weight << ", ";
 	}
+	std::cout << "\n";
 
+	std::pair<Member, Member> children = Population::crossover(pop.getMember(0), pop.getMember(1));
+
+	weights = children.first.m_network.getWeights();
+
+	for (auto weight : weights) {
+		std::cout << weight << ", ";
+	}
+	std::cout << "\n";
+
+	weights = children.second.m_network.getWeights();
+
+	for (auto weight : weights) {
+		std::cout << weight << ", ";
+	}
+	std::cout << "\n";
 
 
 	//Network Test

@@ -139,6 +139,29 @@ Member Population::tournamentSelect() {
 	return bestMember;
 }
 
-Member::Member(): m_network(Network(pow(BOARD_SIZE, 2), LAYER_SIZES, NUM_OUTPUTS)) {
+std::pair<Member, Member> Population::crossover(Member member1, Member member2) {
+	SuperArray<Member> children = SuperArray<Member>(2);
+	MyRandom rnd = MyRandom();
+
+	std::vector<double> firstWeights = member1.m_network.getWeights();
+	std::vector<double> secondWeights = member2.m_network.getWeights();
+
+	for (int i = 0; i < firstWeights.size(); i++) {
+		if (rnd.integer(2) == 1) {
+			double temp = secondWeights[i];
+			secondWeights[i] = firstWeights[i];
+			firstWeights[i] = temp;
+		}
+	}
+
+	Member child1 = Member();
+	Member child2 = Member();
+	child1.m_network.setWeights(firstWeights);
+	child2.m_network.setWeights(secondWeights);
+
+	return { child1, child2 };
+}
+
+Member::Member(): m_network(Network(NUM_INPUTS, LAYER_SIZES, NUM_OUTPUTS)) {
 	m_score = 0;
 }

@@ -23,7 +23,7 @@ public:
 		arrayPointer[index] = value;
 	}
 
-	int length() {
+	int size() {
 		return length;
 	}
 

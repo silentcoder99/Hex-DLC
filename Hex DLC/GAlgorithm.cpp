@@ -140,7 +140,7 @@ Member Population::tournamentSelect() {
 }
 
 std::pair<Member, Member> Population::crossover(Member member1, Member member2) {
-	SuperArray<Member> children = SuperArray<Member>(2);
+	//Creates 2 new children using randomly selected weights from each parent
 	MyRandom rnd = MyRandom();
 
 	std::vector<double> firstWeights = member1.m_network.getWeights();

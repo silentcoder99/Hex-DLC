@@ -16,7 +16,7 @@ struct Vec2 {
 	}
 
 	float distance(Vec2 other) {
-		return std::sqrt(std::pow(other.x - x, 2) + std::pow(other.y - y, 2));
+		return std::sqrt(std::pow((other.x + 0.5 * other.y) - (x + 0.5 * y), 2) + std::pow(other.y - y, 2));
 	}
 
 	bool operator==(Vec2 other) {

@@ -32,16 +32,14 @@ struct Member {
 class Population {
 	
 	int m_numMembers;
-	
-public:
 	Member tournamentSelect();
-	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	std::vector<Member> m_members;
-
 	int startMatch(Member, Member);
-	void scoreMembers();
 	int partitionMembers(int, int);
 
+public:
+	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
+	void scoreMembers();
 	Population(bool);
 	Member getMember(int);
 	void setMember(Member, int);

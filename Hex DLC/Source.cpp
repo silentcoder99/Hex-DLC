@@ -9,25 +9,20 @@
 
 int main() {
 
-	Population pop = Population(POP_SIZE);
-	std::vector<double> weights;
-
-	weights = pop.getMember(0).m_network.getWeights();
+	Population pop = Population(true);
 	
-	for (auto weight : weights) {
-		std::cout << weight << ", ";
+	std::cout << "Evolving Generation:" << "\n";
+	for (int i = 0; i < GENERATION_COUNT; i++) {
+		std::cout << i + 1 << "\n";
+		pop = Population::evolve(pop);
 	}
-	std::cout << "\n";
+	std::cout << "Finshed Evolution";
 
-	Member mutant = Population::mutate(pop.getMember(0));
-	pop.setMember(mutant, 0);
+	//Save weights to file
+	pop.sortMembers();
 
-	weights = pop.getMember(0).m_network.getWeights();
-
-	for (auto weight : weights) {
-		std::cout << weight << ", ";
-	}
-
+	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
+	FileIO::saveWeightsToFile("Champ.txt", weights);
 
 	//Network Test
 	/*Network net = Network(2, { 2 }, 1);

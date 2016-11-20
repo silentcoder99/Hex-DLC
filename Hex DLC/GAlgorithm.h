@@ -4,6 +4,7 @@
 #include "SuperArray.hpp"
 
 //Genetic parameters
+#define GENERATION_COUNT 10
 #define POP_SIZE 10
 #define TOURNAMENT_SIZE 2
 #define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
@@ -41,10 +42,12 @@ public:
 	void scoreMembers();
 	int partitionMembers(int, int);
 
-	Population(int);
+	Population(bool);
 	Member getMember(int);
 	void setMember(Member, int);
+	void addMember(Member);
 
 	static std::pair<Member, Member> crossover(Member, Member);
 	static Member mutate(Member);
+	static Population evolve(Population);
 };

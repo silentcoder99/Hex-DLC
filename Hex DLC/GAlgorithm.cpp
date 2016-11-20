@@ -4,11 +4,16 @@
 #include <math.h>
 #include <iostream>
 
-Population::Population(int numMembers): m_members(std::vector<Member>()) {
-	for (int i = 0; i < numMembers; i++) {
-		m_members.push_back(Member());
+Population::Population(bool init): m_members(std::vector<Member>()) {
+	if (init) {
+		for (int i = 0; i < POP_SIZE; i++) {
+			m_members.push_back(Member());
+		}
+		m_numMembers = POP_SIZE;
 	}
-	m_numMembers = numMembers;
+	else {
+		m_numMembers = 0;
+	}
 }
 
 Member Population::getMember(int index) {
@@ -17,6 +22,11 @@ Member Population::getMember(int index) {
 
 void Population::setMember(Member member, int index) {
 	m_members[index] = member;
+}
+
+void Population::addMember(Member member) {
+	m_members.push_back(member);
+	m_numMembers = m_members.size();
 }
 
 int Population::startMatch(Member player1, Member player2) {
@@ -181,11 +191,40 @@ Member Population::mutate(Member member) {
 		}
 	}
 
-	for (auto weight : weights) {
-		std::cout << weight << ", ";
-	}
-	std::cout << "\n";
-
 	member.m_network.setWeights(weights);
 	return member;
+}
+
+Population Population::evolve(Population pop) {
+
+	pop.scoreMembers();
+	pop.sortMembers();
+
+	Population newPop = Population(false);
+
+	//Add top members from previous generation
+	for (int i = 0; i < ELITISM_SIZE; i++) {
+		Member elite = pop.getMember(POP_SIZE - i - 1);
+		elite.m_score = 0;
+		newPop.addMember(elite);
+	}
+
+	//Add children until pop size is reached
+	while (newPop.m_numMembers < POP_SIZE) {
+		Member parent1 = pop.tournamentSelect();
+		Member parent2 = pop.tournamentSelect();
+		std::pair<Member, Member> children = Population::crossover(parent1, parent2);
+		newPop.addMember(children.first);
+		if (newPop.m_numMembers < POP_SIZE) {
+			newPop.addMember(children.second);
+		}
+	}
+
+	//Mutate new members
+	for (int i = 0; i < POP_SIZE; i++) {
+		Member mutant = Population::mutate(newPop.getMember(i));
+		newPop.setMember(mutant, i);
+	}
+	
+	return newPop;
 }

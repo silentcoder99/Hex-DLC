@@ -4,8 +4,13 @@
 #include "Network.h"
 #include "Game.h"
 #include "GAlgorithm.h"
-
 #include "FileIO.h"
+
+//Log Parameters
+#define LOG true
+#define MEMBER_SAVE 20 //How frequently the best member is saved
+#define POP_SAVE 20 //How frequently the population is saved
+
 
 int main() {
 
@@ -17,6 +22,8 @@ int main() {
 		pop = Population::evolve(pop);
 	}
 	std::cout << "Finshed Evolution";
+
+
 
 	//Save weights to file
 	pop.sortMembers();
@@ -37,7 +44,6 @@ int main() {
 
 	std::cout << "Network output: " << net.getOutput({ 0.5, 0.5 })[0] << "\n";
 	std::cout << "Total Weights: " << net.getNumWeights() << "\n";*/
-
 
 	// Save Weights of champion
 	//std::vector<double> wieghts = pop.getMember(0).m_network.getWeights();

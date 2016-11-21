@@ -14,6 +14,8 @@
 
 int main() {
 
+	
+
 	Population pop = Population(true);
 
 	for (int i = 0; i < GENERATION_COUNT; i++) {
@@ -45,6 +47,8 @@ int main() {
 	FileIO::saveWeightsToFile("Member " + std::to_string(GENERATION_COUNT - 1) + ".txt", weights);
 
 	FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
+
+	pop.startMatch(pop.getMember(POP_SIZE - 1), pop.getMember(POP_SIZE - 2), true);
 
 	//Network Test
 	/*Network net = Network(2, { 2 }, 1);

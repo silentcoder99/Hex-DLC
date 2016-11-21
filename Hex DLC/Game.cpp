@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Game.h"
+#include "FileIO.h"
 
 Board::Board() {
 	//Set initial board state
@@ -158,13 +159,15 @@ int Board::getWinner() {
 }
 
 void Board::print() {
+	FileIO::logPrint("\n");
 	for (int row = 0; row < BOARD_SIZE; row++) {
 		for (int i = 0; i < row; i++) {
-			std::cout << " ";
+			FileIO::logPrint(" ");
 		}
 		for (auto column : m_board) {
-				std::cout << column[row] << " ";
+				FileIO::logPrint(std::to_string(column[row]) + " ");
 		}
-		std::cout << "\n";
+		FileIO::logPrint("\n");
 	}
+	FileIO::logPrint("\n");
 }

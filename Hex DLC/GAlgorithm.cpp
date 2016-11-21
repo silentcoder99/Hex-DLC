@@ -29,7 +29,7 @@ void Population::addMember(Member member) {
 	m_numMembers = m_members.size();
 }
 
-int Population::startMatch(Member player1, Member player2) {
+int Population::startMatch(Member player1, Member player2, bool log = false) {
 	Board board = Board();
 
 	while (board.getWinner() == 0) {
@@ -89,6 +89,9 @@ int Population::startMatch(Member player1, Member player2) {
 		}
 
 		board.performMove(chosenPosition);
+		if (log) {
+			board.print();
+		}
 
 	}
 	return board.getWinner();

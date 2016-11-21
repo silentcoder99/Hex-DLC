@@ -34,10 +34,11 @@ class Population {
 	int m_numMembers;
 	Member tournamentSelect();
 	std::vector<Member> m_members;
-	int startMatch(Member, Member);
+	
 	int partitionMembers(int, int);
 
 public:
+	int startMatch(Member, Member, bool log);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
 	Population(bool);

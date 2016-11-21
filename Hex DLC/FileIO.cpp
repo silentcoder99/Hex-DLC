@@ -73,3 +73,15 @@ Population FileIO::readPopFromFile(std::string filename) {
 
 	return pop;
 }
+
+//Writes to the output stream as well as to log.txt
+void FileIO::logPrint(std::string str) {
+	std::cout << str;
+
+	std::ofstream outFile;
+	outFile.open("log.txt", std::ofstream::out | std::ofstream::app);
+
+	if (outFile.is_open()) {
+		outFile << str;
+	}
+}

@@ -15,7 +15,7 @@ struct Vec2 {
 		y = yy;
 	}
 
-	float distance(Vec2 other) {
+	double distance(Vec2 other) {
 		return std::sqrt(std::pow((other.x + 0.5 * other.y) - (x + 0.5 * y), 2) + std::pow(other.y - y, 2));
 	}
 

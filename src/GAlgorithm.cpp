@@ -81,7 +81,7 @@ int Population::startMatch(Member player1, Member player2, bool log = false) {
 			output[1] = -output[0] + BOARD_SIZE - 1;
 		}
 
-		Vec2 chosenPosition = Vec2(output[0], output[1]);
+		Vec2 chosenPosition = Vec2((int)output[0], (int)output[1]);
 		//If hex is taken, take nearest empty hex
 		if (board.getValue(chosenPosition) != 0) {
 			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
@@ -163,7 +163,7 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 	std::vector<double> firstWeights = member1.m_network.getWeights();
 	std::vector<double> secondWeights = member2.m_network.getWeights();
 
-	for (int i = 0; i < firstWeights.size(); i++) {
+	for (unsigned int i = 0; i < firstWeights.size(); i++) {
 		if (rnd.integer(2) == 1) {
 			double temp = secondWeights[i];
 			secondWeights[i] = firstWeights[i];
@@ -188,7 +188,7 @@ Member Population::mutate(Member member) {
 
 	std::vector<double> weights = member.m_network.getWeights();
 
-	for (int i = 0; i < weights.size(); i++) {
+	for (unsigned int i = 0; i < weights.size(); i++) {
 		if (rnd.real(0, 1) < MUTATION_RATE) {
 			weights[i] = rnd.real(-1, 1);
 		}

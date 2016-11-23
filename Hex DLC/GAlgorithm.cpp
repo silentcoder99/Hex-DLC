@@ -29,7 +29,7 @@ void Population::addMember(Member member) {
 	m_numMembers = m_members.size();
 }
 
-int Population::startMatch(Member player1, Member player2, bool log = false) {
+int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 	Board board = Board();
 
 	while (board.getWinner() == 0) {
@@ -83,10 +83,19 @@ int Population::startMatch(Member player1, Member player2, bool log = false) {
 		}
 
 		Vec2 chosenPosition = Vec2(output[0], output[1]);
+
 		//If hex is taken, take nearest empty hex
 		if (board.getValue(chosenPosition) != 0) {
 			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
 			chosenPosition = emptyPos;
+
+			//Penalize player for performing an illegal move
+			if (board.getCurrentPlayer() == 1) {
+				player1.m_score -= INVALID_MOVE_PENALTY;
+			}
+			else if (board.getCurrentPlayer() == 2) {
+				player2.m_score -= INVALID_MOVE_PENALTY;
+			}
 		}
 
 		board.performMove(chosenPosition);
@@ -105,10 +114,10 @@ void Population::scoreMembers() {
 		for (int j = i + 1; j < m_numMembers; j++) {
 			//Award AI's for winning
 			if (startMatch(m_members[i], m_members[j]) == 1) {
-				m_members[i].m_score++;
+				m_members[i].m_score += WIN_REWARD;
 			}
 			else {
-				m_members[j].m_score++;
+				m_members[j].m_score += WIN_REWARD;
 			}
 		}
 	}
@@ -116,7 +125,7 @@ void Population::scoreMembers() {
 
 int Population::partitionMembers(int start, int end) {
 	int low = start;
-	int pivot = m_members[end].m_score;
+	double pivot = m_members[end].m_score;
 
 	for (int i = start; i < end; i++) {
 		if (m_members[i].m_score <= pivot) {
@@ -145,7 +154,7 @@ void Population::sortMembers(int start, int end) {
 
 Member Population::tournamentSelect() {
 	MyRandom rnd = MyRandom();
-	int bestScore = 0;
+	double bestScore = 0;
 	Member bestMember;
 	
 	for (int i = 0; i < TOURNAMENT_SIZE; i++) {

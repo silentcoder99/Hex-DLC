@@ -36,7 +36,9 @@ int main() {
 		}
 	}
 	FileIO::logPrint("Finished Evolution\n");
+	
 	//Save weights and population to file
+	pop.scoreMembers();
 	pop.sortMembers();
 
 	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();

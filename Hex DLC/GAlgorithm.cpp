@@ -56,6 +56,7 @@ int Population::startMatch(Member player1, Member player2, bool log = false) {
 				}
 			}
 		}
+
 		//Calculate and perform move
 
 		std::vector<double> output;
@@ -89,6 +90,7 @@ int Population::startMatch(Member player1, Member player2, bool log = false) {
 		}
 
 		board.performMove(chosenPosition);
+
 		if (log) {
 			board.print();
 		}

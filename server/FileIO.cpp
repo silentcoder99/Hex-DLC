@@ -3,13 +3,23 @@
 #include <fstream>
 #include <iostream>
 
+std::string FileIO::doubleVectorToString(std::vector<double> vector)
+{
+	std::stringstream ss;
+
+	for (auto element : vector) {
+		ss << element << ",";
+	}
+
+	return ss.str();
+	
+}
+
 void FileIO::saveWeightsToFile(std::string filename, std::vector<double> vector) {
 	std::ofstream outFile(filename);
 
 	if (outFile.is_open()) {
-		for (auto element : vector) {
-			outFile << element << ",";
-		}
+		outFile << doubleVectorToString(vector);
 		outFile.close();
 	}
 

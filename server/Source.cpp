@@ -1,10 +1,5 @@
 #include <iostream>
-#include <math.h>
-#include "MyRandom.h"
-#include "Network.h"
-#include "Game.h"
-#include "GAlgorithm.h"
-#include "FileIO.h"
+#include "Server.h"
 
 //Log Parameters
 #define LOG true
@@ -14,37 +9,18 @@
 
 int main() {
 
-	
-	Population pop = Population(true);
+	DLCServer server;
+	server.start();
 
-	for (int i = 0; i < GENERATION_COUNT; i++) {
-		FileIO::logPrint("Evolving generation " + std::to_string(i) + "\n");
+	//
+	////Save weights and population to file
+	//pop.scoreMembers();
+	//pop.sortMembers();
 
-		pop = Population::evolve(pop);
+	//std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
+	//FileIO::saveWeightsToFile("Member " + std::to_string(GENERATION_COUNT - 1) + ".txt", weights);
 
-		//Save population
-		if (i != 0 && i % POP_SAVE == 0) {
-			FileIO::savePopToFile("Population " + std::to_string(i) + ".txt", pop);
-		}
-
-		//Save member
-		if (i != 0 && i % MEMBER_SAVE == 0) {
-			pop.sortMembers();
-
-			std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
-			FileIO::saveWeightsToFile("Member " + std::to_string(i) + ".txt", weights);
-		}
-	}
-	FileIO::logPrint("Finished Evolution\n");
-	
-	//Save weights and population to file
-	pop.scoreMembers();
-	pop.sortMembers();
-
-	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
-	FileIO::saveWeightsToFile("Member " + std::to_string(GENERATION_COUNT - 1) + ".txt", weights);
-
-	FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
+	//FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
 
 	////Log a test game against the two best AI's
 	/*pop.sortMembers();

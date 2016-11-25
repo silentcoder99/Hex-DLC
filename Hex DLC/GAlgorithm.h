@@ -5,7 +5,7 @@
 
 //Genetic parameters
 #define GENERATION_COUNT 50
-#define POP_SIZE 10
+#define POP_SIZE 50
 #define TOURNAMENT_SIZE 2
 #define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
 #define MUTATION_RATE 0.2
@@ -43,7 +43,7 @@ public:
 	int startMatch(Member&, Member&, bool log);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
-	Population(bool);
+	Population(bool init);
 	Member getMember(int);
 	void setMember(Member, int);
 	void addMember(Member);

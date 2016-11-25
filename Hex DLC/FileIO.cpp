@@ -31,10 +31,14 @@ std::vector<double> FileIO::readWeightsFromFile(std::string filename) {
 	return weights;
 }
 
-void FileIO::savePopToFile(std::string filename, Population population) {
+void FileIO::savePopToFile(std::string filename, Population population, int generation) {
 	std::ofstream outFile(filename);
 
 	if (outFile.is_open()) {
+		//Save generation count
+		outFile << generation << "\n";
+
+		//Save members
 		for (int i = 0; i < POP_SIZE; i++) {
 			std::vector<double> weights = population.getMember(i).m_network.getWeights();
 
@@ -52,6 +56,10 @@ Population FileIO::readPopFromFile(std::string filename) {
 
 	if (inFile.is_open()) {
 		std::string line;
+
+		//Ingnore first line (generation count)
+		std::getline(inFile, line);
+
 		while (std::getline(inFile, line, '\n')) {
 			if (!line.empty()) {
 				std::stringstream  linestream(line);

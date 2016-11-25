@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <fstream>
 #include "MyRandom.h"
 #include "Network.h"
 #include "Game.h"
@@ -14,28 +15,49 @@
 
 int main() {
 
-	
 	Population pop = Population(true);
+	int generation = 1;
 
-	for (int i = 0; i < GENERATION_COUNT; i++) {
-		FileIO::logPrint("Evolving generation " + std::to_string(i) + "\n");
+	//Load initial population from startup file is one exists
+	std::ifstream infile("startup.txt");
+	if (infile.is_open()) {
+
+		//Load generation count
+		std::string str;
+		std::getline(infile, str);
+		generation = std::stoi(str) + 1;
+
+		infile.close();
+		FileIO::logPrint("Loading initial population from startup file\n");
+
+		pop = FileIO::readPopFromFile("startup.txt");
+	}
+	else {
+		FileIO::logPrint("Startup file not found, generating initial population\n");
+	}
+
+	//Evolve population
+	for (generation; generation <= GENERATION_COUNT; generation++) {
+
+		FileIO::logPrint("Evolving generation " + std::to_string(generation) + "\n");
 
 		pop = Population::evolve(pop);
 
 		//Save population
-		if (i != 0 && i % POP_SAVE == 0) {
-			FileIO::savePopToFile("Population " + std::to_string(i) + ".txt", pop);
+		if (generation % POP_SAVE == 0) {
+			FileIO::savePopToFile("Population " + std::to_string(generation) + ".txt", pop, generation);
 		}
 
 		//Save member
-		if (i != 0 && i % MEMBER_SAVE == 0) {
+		if (generation % MEMBER_SAVE == 0) {
 			pop.sortMembers();
 
 			std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
-			FileIO::saveWeightsToFile("Member " + std::to_string(i) + ".txt", weights);
+			FileIO::saveWeightsToFile("Member " + std::to_string(generation) + ".txt", weights);
 		}
 	}
 	FileIO::logPrint("Finished Evolution\n");
+
 	
 	//Save weights and population to file
 	pop.scoreMembers();
@@ -44,7 +66,9 @@ int main() {
 	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
 	FileIO::saveWeightsToFile("Member " + std::to_string(GENERATION_COUNT - 1) + ".txt", weights);
 
-	FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
+	FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop, generation);
+
+
 
 	////Log a test game against the two best AI's
 	/*pop.sortMembers();

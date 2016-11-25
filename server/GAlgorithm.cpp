@@ -33,7 +33,7 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 	Board board = Board();
 
 	while (board.getWinner() == 0) {
-		std::vector<double> input;
+		Array<double> input(BOARD_SIZE * BOARD_SIZE);
 		boardArray rawBoard = board.getBoard();
 
 		//Convert the board to a list
@@ -41,7 +41,7 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				//Player 1
 				if (board.getCurrentPlayer() == 1) {
-					input.push_back(rawBoard[i][j]);
+					input[i * 11 + j] = rawBoard[i][j];
 				}
 				//Player 2
 				else {
@@ -52,14 +52,14 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 					if (value == 1) { value = 2; }
 					else if (value == 2) { value = 1; }
 
-					input.push_back(value);
+					input[i * 11 + j] = value;
 				}
 			}
 		}
 
 		//Calculate and perform move
 
-		std::vector<double> output;
+		Array<double> output(NUM_OUTPUTS);
 
 		if (board.getCurrentPlayer() == 1) {
 			// Get Output
@@ -171,8 +171,8 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 	//Creates 2 new children using randomly selected weights from each parent
 	MyRandom rnd = MyRandom();
 
-	std::vector<double> firstWeights = member1.m_network.getWeights();
-	std::vector<double> secondWeights = member2.m_network.getWeights();
+	Array<double> firstWeights = member1.m_network.getWeights();
+	Array<double> secondWeights = member2.m_network.getWeights();
 
 	for (unsigned int i = 0; i < firstWeights.size(); i++) {
 		if (rnd.integer(2) == 1) {
@@ -197,7 +197,7 @@ Member::Member(): m_network(Network(NUM_INPUTS, LAYER_SIZES, NUM_OUTPUTS)) {
 Member Population::mutate(Member member) {
 	MyRandom rnd = MyRandom();
 
-	std::vector<double> weights = member.m_network.getWeights();
+	Array<double> weights = member.m_network.getWeights();
 
 	for (unsigned int i = 0; i < weights.size(); i++) {
 		if (rnd.real(0, 1) < MUTATION_RATE) {

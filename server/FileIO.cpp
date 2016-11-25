@@ -3,23 +3,23 @@
 #include <fstream>
 #include <iostream>
 
-std::string FileIO::doubleVectorToString(std::vector<double> vector)
+std::string FileIO::doubleArrayToString(Array<double> vector)
 {
 	std::stringstream ss;
 
-	for (auto element : vector) {
-		ss << element << ",";
+	for (int i = 0; i < vector.size(); i++) {
+		ss << vector[i] << ",";
 	}
 
 	return ss.str();
 	
 }
 
-void FileIO::saveWeightsToFile(std::string filename, std::vector<double> vector) {
+void FileIO::saveWeightsToFile(std::string filename, Array<double> vector) {
 	std::ofstream outFile(filename);
 
 	if (outFile.is_open()) {
-		outFile << doubleVectorToString(vector);
+		outFile << doubleArrayToString(vector);
 		outFile.close();
 	}
 
@@ -46,10 +46,10 @@ void FileIO::savePopToFile(std::string filename, Population population) {
 
 	if (outFile.is_open()) {
 		for (int i = 0; i < POP_SIZE; i++) {
-			std::vector<double> weights = population.getMember(i).m_network.getWeights();
+			Array<double> weights = population.getMember(i).m_network.getWeights();
 
-			for (auto weight : weights) {
-				outFile << weight << ",";
+			for (int i = 0; i < weights.size(); i++) {
+				outFile << weights[i] << ",";
 			}
 			outFile << "\n";
 		}
@@ -65,12 +65,20 @@ Population FileIO::readPopFromFile(std::string filename) {
 		while (std::getline(inFile, line, '\n')) {
 			if (!line.empty()) {
 				std::stringstream  linestream(line);
-				std::vector<double> weights;
 				std::string weight;
-
+				int weightCount = 0;
 				while (std::getline(linestream, weight, ',')) {
 					if (!weight.empty()) {
-						weights.push_back(std::stod(weight));
+						weightCount++;
+					}
+				}
+				Array<double> weights(weightCount);
+
+				int weightIndex = 0;
+				while (std::getline(linestream, weight, ',')) {
+					if (!weight.empty()) {
+						weights[weightIndex] = std::stod(weight);
+						weightIndex++;
 					}
 				}
 				Member member = Member();

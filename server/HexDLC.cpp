@@ -5,6 +5,7 @@
 #include "Network.h"
 #include "Game.h"
 #include "FileIO.h"
+#include <iostream>
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -16,7 +17,7 @@ HexDLC::HexDLC() :mPopulation(true)
 void HexDLC::run() {
 
 	while (mDLCRunning) {
-
+		std::cout << "Generation evolved" << std::endl;
 		mPopulation = Population::evolve(mPopulation);
 		mPopulation.sortMembers();
 

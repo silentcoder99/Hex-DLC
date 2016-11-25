@@ -1,32 +1,35 @@
 #pragma once 
 #include <vector>
 #include <math.h>
+#include "SuperArray.hpp"
 
 struct Neuron {
 	int m_numWeights;
-	std::vector<double> m_weights;
+	Array<double> m_weights;
 	Neuron(int);
+	Neuron() {};
 };
 
 struct Layer {
 	int m_inputsPerNeuron;
 	int m_numNeurons;
-	std::vector<Neuron> m_neurons;
+	Array<Neuron> m_neurons;
 	Layer(int, int);
+	Layer() {};
 };
 
 class Network {
 	int m_numInputs;
 	int m_numHiddenLayers;
-	std::vector<int> m_layerSizes;
-	std::vector<Layer> m_layers;
+	Array<int> m_layerSizes;
+	Array<Layer> m_layers;
 	int m_numOutputs;
 public:
-	Network(int, std::vector<int>, int);
-	std::vector<double> getOutput(std::vector<double>);
+	Network(int, Array<int>, int);
+	Array<double> getOutput(Array<double>);
 	int getNumWeights();
-	std::vector<double> getWeights();
-	void setWeights(std::vector<double>);
+	Array<double> getWeights();
+	void setWeights(Array<double>);
 };
 
 inline double sigmoid(double x) {

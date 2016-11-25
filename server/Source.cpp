@@ -1,16 +1,23 @@
 #include <iostream>
 #include "Server.h"
+#include "HexDLC.h"
 
 //Log Parameters
 #define LOG true
 #define MEMBER_SAVE 10 //How frequently the best member is saved
 #define POP_SAVE 10 //How frequently the population is saved
 
+#define PROFILING true
 
 int main() {
-
-	DLCServer server;
-	server.start();
+	if (!PROFILING) {
+		DLCServer server;
+		server.start();
+	}
+	else {
+		HexDLC hex;
+		hex.run();
+	}
 
 	//
 	////Save weights and population to file

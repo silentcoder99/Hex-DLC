@@ -4,11 +4,13 @@
 #include "SuperArray.hpp"
 
 //Genetic parameters
-#define GENERATION_COUNT 10
+#define GENERATION_COUNT 50
 #define POP_SIZE 10
 #define TOURNAMENT_SIZE 2
 #define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
 #define MUTATION_RATE 0.2
+#define WIN_REWARD 0
+#define INVALID_MOVE_PENALTY 1
 
 //Network parameters
 #define NUM_INPUTS 121
@@ -25,7 +27,7 @@
 
 struct Member {
 	Network m_network;
-	int m_score;
+	double m_score;
 	Member();
 };
 
@@ -38,7 +40,7 @@ class Population {
 	int partitionMembers(int, int);
 
 public:
-	int startMatch(Member, Member, bool log);
+	int startMatch(Member&, Member&, bool log);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
 	Population(bool);

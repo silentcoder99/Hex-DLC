@@ -43,7 +43,7 @@ void Board::setValue(Vec2 pos, int value) {
 }
 
 // returns distance between points
-int distanceHeuristic(Vec2 firstPos, Vec2 secondPos) {
+double distanceHeuristic(Vec2 firstPos, Vec2 secondPos) {
 	return firstPos.distance(secondPos);
 }
 
@@ -52,7 +52,7 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 	// Initializes closest position to be very far away
 	Vec2 closestPos(200, 200);
 
-	int closestDistance = 200;
+	double closestDistance = 200;
 
 	// Iterate board
 	for (int prospectiveX = 0; prospectiveX < BOARD_SIZE; prospectiveX++) {
@@ -63,7 +63,8 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 			// Is it empty?
 			if (getValue(prospecivePosition) == 0) {
 
-				int distance = distanceHeuristic(prospecivePosition, position);
+				double distance = distanceHeuristic(prospecivePosition, position);
+
 				// is it closer than we were?
 				if (distance < closestDistance) {
 					
@@ -74,7 +75,7 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 			}
 		}
 	}
-	
+
 	// Return closest tile
 	return closestPos;
 }
@@ -159,15 +160,17 @@ int Board::getWinner() {
 }
 
 void Board::print() {
-	FileIO::logPrint("\n");
+	std::string str;
+	str += "\n";
 	for (int row = 0; row < BOARD_SIZE; row++) {
 		for (int i = 0; i < row; i++) {
-			FileIO::logPrint(" ");
+			str += " ";
 		}
 		for (auto column : m_board) {
-				FileIO::logPrint(std::to_string(column[row]) + " ");
+			str += std::to_string(column[row]) + " ";
 		}
-		FileIO::logPrint("\n");
+		str += "\n";
 	}
-	FileIO::logPrint("\n");
+	str += "\n";
+	FileIO::logPrint(str);
 }

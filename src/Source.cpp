@@ -15,7 +15,6 @@
 int main() {
 
 	
-
 	Population pop = Population(true);
 
 	for (int i = 0; i < GENERATION_COUNT; i++) {
@@ -36,11 +35,10 @@ int main() {
 			FileIO::saveWeightsToFile("Member " + std::to_string(i) + ".txt", weights);
 		}
 	}
-	FileIO::logPrint("Finished Evolution");
-
-
-
+	FileIO::logPrint("Finished Evolution\n");
+	
 	//Save weights and population to file
+	pop.scoreMembers();
 	pop.sortMembers();
 
 	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
@@ -48,7 +46,18 @@ int main() {
 
 	FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
 
-	pop.startMatch(pop.getMember(POP_SIZE - 1), pop.getMember(POP_SIZE - 2), true);
+	////Log a test game against the two best AI's
+	/*pop.sortMembers();
+
+	std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
+	FileIO::saveWeightsToFile("Awesome Guy 1.txt", weights);
+
+	weights = pop.getMember(POP_SIZE - 2).m_network.getWeights();
+	FileIO::saveWeightsToFile("Awesome Guy 2.txt", weights);
+
+	pop.startMatch(pop.getMember(POP_SIZE - 1), pop.getMember(POP_SIZE - 2), true);*/
+
+	
 
 	//Network Test
 	/*Network net = Network(2, { 2 }, 1);

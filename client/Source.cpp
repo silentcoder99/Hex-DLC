@@ -12,9 +12,10 @@ using websocketpp::lib::bind;
 // pull out the type of messages sent by our config
 typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
 
+std::string command;
 
 void on_open(client* c, websocketpp::connection_hdl h) {
-	c->send(h, "get champ", websocketpp::frame::opcode::text);
+	c->send(h, command, websocketpp::frame::opcode::text);
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, message_ptr msg) {
@@ -30,40 +31,42 @@ int main(int argc, char* argv[]) {
 
 	std::string uri = "ws://localhost:20046";
 
-	if (argc == 2) {
+	if (argc == 3) {
 		uri = argv[1];
-	}
 
-	try {
+		command = argv[2];
 
-		c.set_access_channels(websocketpp::log::alevel::none);
-		c.clear_access_channels(websocketpp::log::alevel::none);
+		try {
 
-		// Initialize ASIO
-		c.init_asio();
+			c.set_access_channels(websocketpp::log::alevel::none);
+			c.clear_access_channels(websocketpp::log::alevel::none);
 
-		// Register our message handler
-		c.set_message_handler(bind(&on_message, &c, ::_1, ::_2));
+			// Initialize ASIO
+			c.init_asio();
 
-		c.set_open_handler(bind(&on_open, &c, ::_1));
+			// Register our message handler
+			c.set_message_handler(bind(&on_message, &c, ::_1, ::_2));
 
-		websocketpp::lib::error_code ec;
-		client::connection_ptr con = c.get_connection(uri, ec);
-		if (ec) {
-			std::cout << "could not create connection because: " << ec.message() << std::endl;
-			return 0;
+			c.set_open_handler(bind(&on_open, &c, ::_1));
+
+			websocketpp::lib::error_code ec;
+			client::connection_ptr con = c.get_connection(uri, ec);
+			if (ec) {
+				std::cout << "could not create connection because: " << ec.message() << std::endl;
+				return 0;
+			}
+
+			// Note that connect here only requests a connection. No network messages are
+			// exchanged until the event loop starts running in the next line.
+			c.connect(con);
+
+			// Start the ASIO io_service run loop
+			// this will cause a single connection to be made to the server. c.run()
+			// will exit when this connection is closed.
+			c.run();
 		}
-
-		// Note that connect here only requests a connection. No network messages are
-		// exchanged until the event loop starts running in the next line.
-		c.connect(con);
-
-		// Start the ASIO io_service run loop
-		// this will cause a single connection to be made to the server. c.run()
-		// will exit when this connection is closed.
-		c.run();
-	}
-	catch (websocketpp::exception const & e) {
-		std::cout << e.what() << std::endl;
+		catch (websocketpp::exception const & e) {
+			std::cout << e.what() << std::endl;
+		}
 	}
 }

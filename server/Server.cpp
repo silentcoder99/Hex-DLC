@@ -37,10 +37,18 @@ void DLCServer::start() {
 
 void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::message_ptr msg)
 {
-	if (msg->get_payload() == "get champ") {
+	if (msg->get_payload() == "champ") {
 		Member champion = mHexDLC.getChampion();
 		std::string weights = FileIO::doubleVectorToString(champion.m_network.getWeights());
 
 		mServer.send(hdl, weights, websocketpp::frame::opcode::text);
+	}
+	else if (msg->get_payload() == "stop") {
+		mServer.send(hdl, "Exiting...", websocketpp::frame::opcode::text);
+		mHexDLC.stop();
+		mServer.stop();
+	}
+	else {
+		mServer.send(hdl, "Server does not understand the command " + msg->get_payload(), websocketpp::frame::opcode::text);
 	}
 }

@@ -27,6 +27,11 @@ void HexDLC::run() {
 	}
 }
 
+void HexDLC::stop()
+{
+	mDLCRunning = false;
+}
+
 Member HexDLC::getChampion()
 {
 	mChampionRequested = true;

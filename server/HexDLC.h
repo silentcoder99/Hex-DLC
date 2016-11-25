@@ -7,6 +7,7 @@ class HexDLC {
 public:
 	HexDLC();
 	void run(); // Run this on different thread
+	void stop();
 	Member getChampion();
 private:
 	Population mPopulation;

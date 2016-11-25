@@ -103,9 +103,14 @@ int Board::getCurrentPlayer() {
 	return m_currentPlayer;
 }
 
-bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>& searched) {
+bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>* searched) {
 	int startValue = getValue(start);
 
+	bool rootIteration = false;
+	if (searched == nullptr) {
+		searched = new std::vector < Vec2 >();
+		rootIteration = true;
+	}
 	if (getValue(start) != getValue(target)) {
 		return false;
 	}
@@ -114,18 +119,23 @@ bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>& searched) {
 		return true;
 	}
 
-	searched.push_back(start);
+	searched->push_back(start);
 
 	std::list<Hex> neighbours = getNeighbours(start);
 
 	for (auto neighbour : neighbours) {
-		if (std::find(searched.begin(), searched.end(), neighbour.m_position) == searched.end() && neighbour.m_value == startValue) {
+		if (std::find(searched->begin(), searched->end(), neighbour.m_position) == searched->end() && neighbour.m_value == startValue) {
 			if (connected(neighbour.m_position, target, searched)) {
+				if (rootIteration) {
+					delete searched;
+				}
 				return true;
 			}
 		}
 	}
-
+	if (rootIteration) {
+		delete searched;
+	}
 	return false;
 }
 

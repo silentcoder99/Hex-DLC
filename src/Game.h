@@ -22,7 +22,7 @@ class Board {
 	int m_numTurns;
 	int m_currentPlayer;
 	std::list<Hex> getNeighbours(Vec2 position);
-	bool connected(Vec2 start, Vec2 target, std::vector<Vec2>& = std::vector<Vec2>());
+	bool connected(Vec2 start, Vec2 target, std::vector<Vec2>* = nullptr);
 public:
 	Board();
 	Vec2 findNearestEmpty(Vec2 position);

@@ -24,8 +24,7 @@ int main() {
 	//std::vector<double> weights = pop.getMember(POP_SIZE - 1).m_network.getWeights();
 	//FileIO::saveWeightsToFile("Member " + std::to_string(GENERATION_COUNT - 1) + ".txt", weights);
 
-	//FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop);
-
+	//FileIO::savePopToFile("Population " + std::to_string(GENERATION_COUNT - 1) + ".txt", pop)
 	////Log a test game against the two best AI's
 	/*pop.sortMembers();
 

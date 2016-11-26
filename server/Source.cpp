@@ -7,17 +7,14 @@
 #define MEMBER_SAVE 10 //How frequently the best member is saved
 #define POP_SAVE 10 //How frequently the population is saved
 
-#define PROFILING true
-
 int main() {
-	if (!PROFILING) {
-		DLCServer server;
-		server.start();
-	}
-	else {
-		HexDLC hex;
-		hex.run();
-	}
+#ifdef PROFILING
+	HexDLC hex;
+	hex.run();
+#else
+	DLCServer server;
+	server.start();
+#endif
 
 	//
 	////Save weights and population to file

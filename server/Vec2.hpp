@@ -20,6 +20,12 @@ struct Vec2 {
 		return std::sqrt(std::pow((other.x + 0.5 * other.y) - (x + 0.5 * y), 2) + std::pow(other.y - y, 2));
 	}
 
+	double distanceSquared(Vec2 other) const {
+		float xDifference = (other.x + 0.5 * other.y) - (x + 0.5 * y);
+		float yDifference = other.y - y;
+		return xDifference * xDifference + yDifference * yDifference;
+	}
+
 	bool operator==(Vec2 other) const {
 		return x == other.x && y == other.y;
 	}

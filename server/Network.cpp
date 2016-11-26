@@ -53,10 +53,6 @@ Array<double> Network::getOutput(Array<double> inputs) {
 	//std::cout << "Generating Network Output:\n\n";
 	Array<double> output;
 
-	Array<double> weights = Array<double>(inputs.size() + 1);
-
-	weights.copy(inputs);
-
 	for (int layerIndex = 0; layerIndex < m_layers.size(); layerIndex++) {
 		//std::cout << "Generating Layer Output:\n\n";
 
@@ -64,28 +60,27 @@ Array<double> Network::getOutput(Array<double> inputs) {
 
 		output = Array<double>(currentLayer.m_neurons.size());
 
-		weights[weights.size() - 1] = 1; //Add bias input
-
-
 		for (int neuronIndex = 0; neuronIndex < currentLayer.m_neurons.size(); neuronIndex++) {
 			//std::cout << "Generating Neuron Output:\n\n";
 			Neuron& currentNeuron = currentLayer.m_neurons[neuronIndex];
 			//Calculate activation
 			double activation = 0;
 
-			for (int i = 0; i < currentNeuron.m_numWeights; i++) {
+			for (int i = 0; i < currentNeuron.m_numWeights - 1; i++) {
 				//std::cout << "Generating Weighted Input:\n";
 				//std::cout << "Input: " << inputs[i] << ", Weight: " << neuron.m_weights[i];
 				//std::cout << ", Weighted Input: " << inputs[i] * neuron.m_weights[i] << "\n\n";
-				activation += weights[i] * currentNeuron.m_weights[i];
+				activation += inputs[i] * currentNeuron.m_weights[i];
 			}
+
+			// Biased input
+			activation += currentNeuron.m_weights[currentNeuron.m_numWeights - 1];
+
 			//std::cout << "Neuron Output: " << sigmoid(activation) << "\n\n";
 			output[neuronIndex] = sigmoid(activation);
 		}
 		//Output of this layer is the input of the next layer
-		weights = Array<double>(output.size() + 1);
-
-		weights.copy(output);
+		inputs = output;
 	}
 
 	return output;

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Vec2.hpp"
 #include <list>
+#include <unordered_set>
 
 #define BOARD_SIZE 11
 
@@ -21,8 +22,8 @@ class Board {
 	boardArray m_board;
 	int m_numTurns;
 	int m_currentPlayer;
-	std::list<Hex> getNeighbours(Vec2 position);
-	bool connected(Vec2 start, Vec2 target, std::vector<Vec2>* = nullptr);
+	bool connectedToRight(Vec2 start, bool checked[BOARD_SIZE][BOARD_SIZE]);
+	bool connectedToBottom(Vec2 start, bool checked[BOARD_SIZE][BOARD_SIZE]);
 public:
 	Board();
 	Vec2 findNearestEmpty(Vec2 position);

@@ -41,8 +41,15 @@ set (WEBSOCKET_BOOST_LIBS
 find_package( Boost 1.40 COMPONENTS thread ${WEBSOCKET_BOOST_LIBS} REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
+find_package( Threads )
+
 add_executable(Hex-DLCServer ${SERVER_SRC} ${SERVER_HEADER})
 target_link_libraries(Hex-DLCServer ${Boost_LIBRARIES})
 
+target_link_libraries(Hex-DLCServer ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(Hex-DLCClient ${CLIENT_SRC})
 target_link_libraries(Hex-DLCClient ${Boost_LIBRARIES})
+
+target_link_libraries(Hex-DLCClient ${CMAKE_THREAD_LIBS_INIT})
+

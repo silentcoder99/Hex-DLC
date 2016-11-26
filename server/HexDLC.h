@@ -10,6 +10,7 @@ public:
 	void stop();
 	Member getChampion();
 	long int getGenerationCount();
+	std::vector<int> getLayerSizes();
 private:
 	Population mPopulation;
 	bool mDLCRunning = true;

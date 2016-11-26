@@ -49,3 +49,7 @@ Member HexDLC::getChampion()
 long int HexDLC::getGenerationCount() {
 	return mGenerationCount;
 }
+
+std::vector<int> HexDLC::getLayerSizes() {
+	return LAYER_SIZES;
+}

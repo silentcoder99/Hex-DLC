@@ -52,6 +52,14 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 		long int generationCount = mHexDLC.getGenerationCount();
 		mServer.send(hdl, std::to_string(generationCount), websocketpp::frame::opcode::text);
 	}
+	else if (msg->get_payload() == "layersizes") {
+		std::vector<int> layerSizes = mHexDLC.getLayerSizes();
+		std::stringstream ss;
+		for (auto layer : layerSizes) {
+			ss << layer << ",";
+		}
+		mServer.send(hdl, ss.str(), websocketpp::frame::opcode::text);
+	}
 	else {
 		mServer.send(hdl, "Server does not understand the command " + msg->get_payload(), websocketpp::frame::opcode::text);
 	}

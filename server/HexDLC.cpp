@@ -25,6 +25,7 @@ void HexDLC::run() {
 			mChampion = new Member(mPopulation.getMember(POP_SIZE - 1));
 			mChampionRequested = false;
 		}
+		mGenerationCount++;
 	}
 }
 
@@ -43,4 +44,8 @@ Member HexDLC::getChampion()
 	delete mChampion;
 	mChampion = nullptr;
 	return champion;
+}
+
+long int HexDLC::getGenerationCount() {
+	return mGenerationCount;
 }

@@ -48,6 +48,10 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 		mHexDLC.stop();
 		mServer.stop();
 	}
+	else if (msg->get_payload() == "gencount") {
+		long int generationCount = mHexDLC.getGenerationCount();
+		mServer.send(hdl, std::to_string(generationCount), websocketpp::frame::opcode::text);
+	}
 	else {
 		mServer.send(hdl, "Server does not understand the command " + msg->get_payload(), websocketpp::frame::opcode::text);
 	}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <time.h>
 #include "GAlgorithm.h"
 
 // Thread safe HexDLC code

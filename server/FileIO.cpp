@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <limits>
 
 std::string FileIO::doubleArrayToString(Array<double> vector)
 {

@@ -10,7 +10,6 @@
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <time.h>
 
 HexDLC::HexDLC() :mPopulation(true)
 {

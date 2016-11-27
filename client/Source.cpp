@@ -2,6 +2,7 @@
 #include <websocketpp/client.hpp>
 
 #include <iostream>
+#include <sstream>
 
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
@@ -14,8 +15,23 @@ typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
 
 std::string command;
 
+std::string getPopulationInput() {
+	std::stringstream ss;
+	std::string line;
+	while (std::getline(std::cin, line)) {
+		ss << line << std::endl;
+	}
+	return ss.str();
+}
+
 void on_open(client* c, websocketpp::connection_hdl h) {
-	c->send(h, command, websocketpp::frame::opcode::text);
+	if (command == "setPopulation") {
+		std::string population = getPopulationInput();
+		c->send(h, command + "\n" + population, websocketpp::frame::opcode::text);
+	}
+	else {
+		c->send(h, command, websocketpp::frame::opcode::text);
+	}
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, message_ptr msg) {
@@ -31,10 +47,15 @@ int main(int argc, char* argv[]) {
 
 	std::string uri = "ws://localhost:20046";
 
-	if (argc == 3) {
+	if (argc >= 3) {
 		uri = argv[1];
 
-		command = argv[2];
+		for (int argIndex = 2; argIndex < argc; argIndex++) {
+			command += argv[argIndex];
+			if (argIndex != argc - 1) {
+				command += " ";
+			}
+		}
 
 		try {
 

@@ -6,11 +6,12 @@
 class FileIO {
 public:
 	static std::string doubleArrayToString(Array<double> vector);
+	static Array<double> stringToDoubleArray(std::string string);
 
 	static void saveWeightsToFile(std::string filename, Array<double> vector);
 	static std::vector<double> readWeightsFromFile(std::string filename);
-	static void savePopToFile(std::string filename, Population population, int generation = 0);
-	static Population readPopFromFile(std::string filename);
+	static std::string populationToString(Population population);
+	static Population stringToPopulation(std::string filename);
 
 	static void logPrint(std::string str);
 };

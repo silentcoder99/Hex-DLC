@@ -14,7 +14,7 @@
 
 //Network parameters
 #define NUM_INPUTS 121
-#define LAYER_SIZES {10}
+#define LAYER_SIZES {50, 20}
 #define NUM_OUTPUTS 2
 
 //Evolving artifical genomes for dummies:

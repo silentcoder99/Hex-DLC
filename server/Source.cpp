@@ -57,9 +57,5 @@ int main() {
 	//FileIO::saveWeightsToFile("Champ.txt", wieghts);
 	// Read Weights
 	//std::vector<double> recoveredWeights = FileIO::readWeightsFromFile("Champ.txt");
-
-
-	std::cout << "\n";
-	std::getchar();
 	return 0;
 }

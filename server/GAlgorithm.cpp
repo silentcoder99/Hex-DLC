@@ -41,7 +41,15 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				//Player 1
 				if (board.getCurrentPlayer() == 1) {
-					input[i * 11 + j] = rawBoard[i][j];
+					if (rawBoard[i][j] == 0) {
+						input[i * 11 + j] = 0;
+					}
+					else if (rawBoard[i][j] == 1) {
+						input[i * 11 + j] = 1;
+					}
+					else if (rawBoard[i][j] == 2) {
+						input[i * 11 + j] = -1;
+					}
 				}
 				//Player 2
 				else {
@@ -49,7 +57,7 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 					int value = rawBoard[-j + BOARD_SIZE - 1][-i + BOARD_SIZE - 1];
 
 					//Swap values so they see their moves as '1'
-					if (value == 1) { value = 2; }
+					if (value == 1) { value = -1; }
 					else if (value == 2) { value = 1; }
 
 					input[i * 11 + j] = value;

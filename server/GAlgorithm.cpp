@@ -3,6 +3,12 @@
 #include "MyRandom.h"
 #include <math.h>
 #include <iostream>
+#include "WorkerThread.h"
+
+#include <boost/thread.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include <queue>
 
 Population::Population(bool init): m_members(std::vector<Member>()) {
 	if (init) {
@@ -117,18 +123,36 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 }
 
 void Population::scoreMembers() {
+
+	ThreadSafeStack<std::function<void()>> taskStack;
+
 	//Each player plays all players above them (P2 plays P3, P4, P5, etc.)
 	for (int i = 0; i < m_numMembers; i++) {
 		for (int j = i + 1; j < m_numMembers; j++) {
 			//Award AI's for winning
-			if (startMatch(m_members[i], m_members[j]) == 1) {
-				m_members[i].m_score += WIN_REWARD;
-			}
-			else {
-				m_members[j].m_score += WIN_REWARD;
-			}
+			taskStack.push([this, i, j]() {
+				if (startMatch(m_members[i], m_members[j]) == 1) {
+					m_members[i].m_score += WIN_REWARD;
+				}
+				else {
+					m_members[j].m_score += WIN_REWARD;
+				}
+			});
 		}
 	}
+
+	// Get the threads to it!
+	std::queue<WorkerThread*> threadStack;
+	for (int i = 0; i < NUM_THREADS; i++) {
+		threadStack.push(new WorkerThread(taskStack));
+	}
+
+	while (!threadStack.empty()) {
+		threadStack.front()->join();
+		delete threadStack.front();
+		threadStack.pop();
+	}
+
 }
 
 int Population::partitionMembers(int start, int end) {

@@ -17,6 +17,8 @@
 #define LAYER_SIZES {50, 20}
 #define NUM_OUTPUTS 2
 
+#define NUM_THREADS 8
+
 //Evolving artifical genomes for dummies:
 //1. Create an initial random population
 //2. Score each member

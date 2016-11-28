@@ -9,7 +9,8 @@ set (SERVER_SRC
 	server/Network.cpp
 	server/Server.cpp
 	server/HexDLC.cpp
-	server/Source.cpp)
+	server/Source.cpp
+	server/WorkerThread.cpp)
 
 set (SERVER_HEADER
 	server/FileIO.h
@@ -20,7 +21,8 @@ set (SERVER_HEADER
 	server/SuperArray.hpp
 	server/Server.h
 	server/HexDLC.h
-	server/Vec2.hpp)
+	server/Vec2.hpp
+	server/WorkerThread.h)
 	
 set(CLIENT_SRC
 	client/Source.cpp)	

@@ -22,9 +22,9 @@ void HexDLC::run() {
 
 	while (mDLCRunning) {
 		mPopulation = Population::evolve(mPopulation);
-		mPopulation.sortMembers();
 
 		if (mChampionRequested) {
+			mPopulation.sortMembers();
 			mChampion = new Member(mPopulation.getMember(POP_SIZE - 1));
 			mChampionRequested = false;
 		}

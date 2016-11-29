@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 	std::string uri = "ws://localhost:20046";
 
 	if (argc >= 3) {
-		uri = argv[1];
+		uri = "ws://" + std::string(argv[1]) + ":20046";
 
 		for (int argIndex = 2; argIndex < argc; argIndex++) {
 			command += argv[argIndex];

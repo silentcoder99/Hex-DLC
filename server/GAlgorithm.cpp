@@ -3,6 +3,12 @@
 #include "MyRandom.h"
 #include <math.h>
 #include <iostream>
+#include "WorkerThread.h"
+
+#include <boost/thread.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include <queue>
 
 Population::Population(bool init): m_members(std::vector<Member>()) {
 	if (init) {
@@ -33,7 +39,7 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 	Board board = Board();
 
 	while (board.getWinner() == 0) {
-		std::vector<double> input;
+		Array<double> input(BOARD_SIZE * BOARD_SIZE);
 		boardArray rawBoard = board.getBoard();
 
 		//Convert the board to a list
@@ -41,7 +47,15 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				//Player 1
 				if (board.getCurrentPlayer() == 1) {
-					input.push_back(rawBoard[i][j]);
+					if (rawBoard[i][j] == 0) {
+						input[i * 11 + j] = 0;
+					}
+					else if (rawBoard[i][j] == 1) {
+						input[i * 11 + j] = 1;
+					}
+					else if (rawBoard[i][j] == 2) {
+						input[i * 11 + j] = -1;
+					}
 				}
 				//Player 2
 				else {
@@ -49,17 +63,17 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 					int value = rawBoard[-j + BOARD_SIZE - 1][-i + BOARD_SIZE - 1];
 
 					//Swap values so they see their moves as '1'
-					if (value == 1) { value = 2; }
+					if (value == 1) { value = -1; }
 					else if (value == 2) { value = 1; }
 
-					input.push_back(value);
+					input[i * 11 + j] = value;
 				}
 			}
 		}
 
 		//Calculate and perform move
 
-		std::vector<double> output;
+		Array<double> output(NUM_OUTPUTS);
 
 		if (board.getCurrentPlayer() == 1) {
 			// Get Output
@@ -82,7 +96,7 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 			output[1] = -output[0] + BOARD_SIZE - 1;
 		}
 
-		Vec2 chosenPosition = Vec2(output[0], output[1]);
+		Vec2 chosenPosition = Vec2((int)output[0], (int)output[1]);
 
 		//If hex is taken, take nearest empty hex
 		if (board.getValue(chosenPosition) != 0) {
@@ -109,18 +123,36 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 }
 
 void Population::scoreMembers() {
+
+	ThreadSafeStack<std::function<void()>> taskStack;
+
 	//Each player plays all players above them (P2 plays P3, P4, P5, etc.)
 	for (int i = 0; i < m_numMembers; i++) {
 		for (int j = i + 1; j < m_numMembers; j++) {
 			//Award AI's for winning
-			if (startMatch(m_members[i], m_members[j]) == 1) {
-				m_members[i].m_score += WIN_REWARD;
-			}
-			else {
-				m_members[j].m_score += WIN_REWARD;
-			}
+			taskStack.push([this, i, j]() {
+				if (startMatch(m_members[i], m_members[j]) == 1) {
+					m_members[i].m_score += WIN_REWARD;
+				}
+				else {
+					m_members[j].m_score += WIN_REWARD;
+				}
+			});
 		}
 	}
+
+	// Get the threads to it!
+	std::queue<WorkerThread*> threadStack;
+	for (int i = 0; i < NUM_THREADS; i++) {
+		threadStack.push(new WorkerThread(taskStack));
+	}
+
+	while (!threadStack.empty()) {
+		threadStack.front()->join();
+		delete threadStack.front();
+		threadStack.pop();
+	}
+
 }
 
 int Population::partitionMembers(int start, int end) {
@@ -171,10 +203,10 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 	//Creates 2 new children using randomly selected weights from each parent
 	MyRandom rnd = MyRandom();
 
-	std::vector<double> firstWeights = member1.m_network.getWeights();
-	std::vector<double> secondWeights = member2.m_network.getWeights();
+	Array<double> firstWeights = member1.m_network.getWeights();
+	Array<double> secondWeights = member2.m_network.getWeights();
 
-	for (int i = 0; i < firstWeights.size(); i++) {
+	for (unsigned int i = 0; i < firstWeights.size(); i++) {
 		if (rnd.integer(2) == 1) {
 			double temp = secondWeights[i];
 			secondWeights[i] = firstWeights[i];
@@ -197,9 +229,9 @@ Member::Member(): m_network(Network(NUM_INPUTS, LAYER_SIZES, NUM_OUTPUTS)) {
 Member Population::mutate(Member member) {
 	MyRandom rnd = MyRandom();
 
-	std::vector<double> weights = member.m_network.getWeights();
+	Array<double> weights = member.m_network.getWeights();
 
-	for (int i = 0; i < weights.size(); i++) {
+	for (unsigned int i = 0; i < weights.size(); i++) {
 		if (rnd.real(0, 1) < MUTATION_RATE) {
 			weights[i] = rnd.real(-1, 1);
 		}

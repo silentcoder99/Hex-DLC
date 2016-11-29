@@ -9,13 +9,15 @@
 #define TOURNAMENT_SIZE 2
 #define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
 #define MUTATION_RATE 0.2
-#define WIN_REWARD 0
-#define INVALID_MOVE_PENALTY 1
+#define WIN_REWARD 1
+#define INVALID_MOVE_PENALTY 0
 
 //Network parameters
 #define NUM_INPUTS 121
-#define LAYER_SIZES {10}
+#define LAYER_SIZES {50, 20}
 #define NUM_OUTPUTS 2
+
+#define NUM_THREADS 8
 
 //Evolving artifical genomes for dummies:
 //1. Create an initial random population

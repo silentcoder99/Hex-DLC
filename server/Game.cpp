@@ -44,7 +44,7 @@ void Board::setValue(Vec2 pos, int value) {
 
 // returns distance between points
 double distanceHeuristic(Vec2 firstPos, Vec2 secondPos) {
-	return firstPos.distance(secondPos);
+	return firstPos.distanceSquared(secondPos);
 }
 
 Vec2 Board::findNearestEmpty(Vec2 position) {
@@ -52,7 +52,7 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 	// Initializes closest position to be very far away
 	Vec2 closestPos(200, 200);
 
-	double closestDistance = 200;
+	double closestDistance = 20000;
 
 	// Iterate board
 	for (int prospectiveX = 0; prospectiveX < BOARD_SIZE; prospectiveX++) {
@@ -80,21 +80,6 @@ Vec2 Board::findNearestEmpty(Vec2 position) {
 	return closestPos;
 }
 
-std::list<Hex> Board::getNeighbours(Vec2 pos) {
-	std::list<Hex> neighbours;
-
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
-			//Check that surrounding values are valid neighbours
-			if (!((pos.x + i < 0) || (pos.x + i > BOARD_SIZE - 1) || (pos.y + j < 0) || (pos.y + j > BOARD_SIZE - 1) || (i == j))) {
-				Hex neighbour = Hex(Vec2(pos.x + i, pos.y + j), m_board[pos.x + i][pos.y + j]);
-				neighbours.push_back(neighbour);
-			}
-		}
-	}
-	return neighbours;
-}
-
 int Board::getNumTurns() {
 	return m_numTurns;
 }
@@ -103,55 +88,96 @@ int Board::getCurrentPlayer() {
 	return m_currentPlayer;
 }
 
-bool Board::connected(Vec2 start, Vec2 target, std::vector<Vec2>& searched) {
+bool Board::connectedToRight(Vec2 start, bool searched[BOARD_SIZE][BOARD_SIZE]) {
 	int startValue = getValue(start);
 
-	if (getValue(start) != getValue(target)) {
-		return false;
-	}
+	static const Vec2 neighbours[] = {
+		Vec2(1, 0),
+		Vec2(1, -1),
+		Vec2(0, 1),
+		Vec2(0, -1),
+		Vec2(-1, 0),
+		Vec2(-1, 1)
+	};
 
-	if (start == target) {
+	if (start.x == BOARD_SIZE - 1) {
 		return true;
 	}
 
-	searched.push_back(start);
-
-	std::list<Hex> neighbours = getNeighbours(start);
+	searched[start.x][start.y] = true;
 
 	for (auto neighbour : neighbours) {
-		if (std::find(searched.begin(), searched.end(), neighbour.m_position) == searched.end() && neighbour.m_value == startValue) {
-			if (connected(neighbour.m_position, target, searched)) {
+		Vec2 boardNeighbor = neighbour + start;
+
+		bool outsideOfBoard = boardNeighbor.x < 0 || boardNeighbor.x >= BOARD_SIZE || boardNeighbor.y < 0 || boardNeighbor.y >= BOARD_SIZE;
+		if (outsideOfBoard) {
+			continue;
+		}
+
+		if (!searched[boardNeighbor.x][boardNeighbor.y] && getValue(boardNeighbor) == startValue) {
+			if (connectedToRight(boardNeighbor, searched)) {
 				return true;
 			}
 		}
 	}
-
 	return false;
 }
 
+bool Board::connectedToBottom(Vec2 start, bool searched[BOARD_SIZE][BOARD_SIZE]) {
+	int startValue = getValue(start);
+
+	static const Vec2 neighbours[] = {
+		Vec2(-1, 1),
+		Vec2(0, 1),
+		Vec2(1, 0),
+		Vec2(-1, 0),
+		Vec2(1, -1),
+		Vec2(0, -1),
+	};
+
+	if (start.y == BOARD_SIZE - 1) {
+		return true;
+	}
+
+	searched[start.x][start.y] = true;
+
+	for (auto neighbour : neighbours) {
+		Vec2 boardNeighbor = neighbour + start;
+
+		bool outsideOfBoard = boardNeighbor.x < 0 || boardNeighbor.x >= BOARD_SIZE || boardNeighbor.y < 0 || boardNeighbor.y >= BOARD_SIZE;
+		if (outsideOfBoard) {
+			continue;
+		}
+
+		if (!searched[boardNeighbor.x][boardNeighbor.y] && getValue(boardNeighbor) == startValue) {
+			if (connectedToBottom(boardNeighbor, searched)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
 int Board::getWinner() {
+	bool checkedPlayer1[BOARD_SIZE][BOARD_SIZE] = { false };
+
 	//Test for player 1 victory
 	for (int i = 0; i < BOARD_SIZE; i++) {
-		if (m_board[0][i] == 1) {
-			for (int j = 0; j < BOARD_SIZE; j++) {
-				if (m_board[BOARD_SIZE - 1][j] == 1) {
-					if (connected(Vec2(0, i), Vec2(BOARD_SIZE - 1, j))) {
-						return 1;
-					}
-				}
+		if (m_board[0][i] == 1 && !checkedPlayer1[0][i]) {
+			if (connectedToRight(Vec2(0, i), checkedPlayer1)) {
+				return 1;
 			}
 		}
 	}
 
+	bool checkedPlayer2[BOARD_SIZE][BOARD_SIZE] = { false };
+
 	//Test for player 2 victory
 	for (int i = 0; i < BOARD_SIZE; i++) {
-		if (m_board[i][0] == 2) {
-			for (int j = 0; j < BOARD_SIZE; j++) {
-				if (m_board[j][BOARD_SIZE - 1] == 2) {
-					if (connected(Vec2(i, 0), Vec2(j, BOARD_SIZE - 1))) {
-						return 2;
-					}
-				}
+		if (m_board[i][0] == 2 && !checkedPlayer2[i][0]) {
+			if (connectedToBottom(Vec2(i, 0), checkedPlayer2)) {
+				return 2;
 			}
 		}
 	}

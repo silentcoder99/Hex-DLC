@@ -10,5 +10,6 @@ double MyRandom::real(double min, double max) {
 }
 
 int MyRandom::integer(int max) {
-	return (int)real(0, max);
+	int randomNumber = (int)real(0, max);
+	return randomNumber == max ? randomNumber - 1 : randomNumber;
 }

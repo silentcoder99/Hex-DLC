@@ -13,7 +13,7 @@ const BOARD_SIZE = 11;
 
 //Network constants
 const INPUT_SIZE = 121;
-const LAYER_SIZES = [10, 2]; //This list include the output layer
+const LAYER_SIZES = [50, 20, 2]; //This list include the output layer
 const NUM_OUTPUTS = 2;
 
 let championWeights = []; // Paste weights from saved file here
@@ -61,7 +61,12 @@ function main () {
 		for (let j = 0; j < BOARD_SIZE; j++) {
 			//Player 1
 			if (turn == 0) {
-				input.push(board[i][j]);
+				let piece = board[i][j];
+				if(piece == 2){
+					piece = -1
+				}
+				
+				input.push(piece)
 			}
 			//Player 2
 			if (turn == 1) {
@@ -69,7 +74,7 @@ function main () {
 				let piece = board[-j + BOARD_SIZE - 1][-i + BOARD_SIZE - 1];
 
 				//Swap values so player 2 sees their moves as '1'
-				if (piece == 1) {piece = 2;}
+				if (piece == 1) {piece = -1;}
 				else if (piece == 2) {piece = 1;}
 
 				input.push(piece);

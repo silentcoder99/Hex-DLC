@@ -46,10 +46,11 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 	}
 	else if (payload == "stop") {
 		mServer.send(hdl, "Exiting...", websocketpp::frame::opcode::text);
+		mServer.close(hdl, websocketpp::close::status::going_away, "Server closing");
 		mHexDLC.stop();
 		mServer.stop();
 	}
-	else if (payload == "gencount") {
+	else if (payload == "genCount") {
 		long int generationCount = mHexDLC.getGenerationCount();
 		mServer.send(hdl, std::to_string(generationCount), websocketpp::frame::opcode::text);
 	}

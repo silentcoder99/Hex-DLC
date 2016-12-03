@@ -34,15 +34,15 @@ struct Member {
 };
 
 class Population {
-	
+
 	int m_numMembers;
 	Member tournamentSelect();
 	std::vector<Member> m_members;
-	
+
 	int partitionMembers(int, int);
 
 public:
-	int startMatch(Member&, Member&, bool log);
+	int startMatch(Member&, Member&, std::ostream* = nullptr);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
 	Population(bool init);

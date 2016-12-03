@@ -185,7 +185,7 @@ int Board::getWinner() {
 	return 0;
 }
 
-void Board::print() {
+std::string Board::toString() {
 	std::string str;
 	str += "\n";
 	for (int row = 0; row < BOARD_SIZE; row++) {
@@ -198,5 +198,5 @@ void Board::print() {
 		str += "\n";
 	}
 	str += "\n";
-	FileIO::logPrint(str);
+	return str;
 }

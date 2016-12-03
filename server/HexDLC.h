@@ -21,6 +21,7 @@ public:
 	void setPopulation(Population pop);
 
 	std::string getState();
+	std::string getMatch();
 private:
 	Population mPopulation;
 	bool mDLCRunning = true;

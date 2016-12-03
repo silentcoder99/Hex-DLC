@@ -70,7 +70,7 @@ std::string Population::save()
 
 }
 
-int Population::startMatch(Member& player1, Member& player2, bool log = false) {
+int Population::startMatch(Member& player1, Member& player2, std::ostream* outStream) {
 	Board board = Board();
 
 	while (board.getWinner() == 0) {
@@ -149,8 +149,8 @@ int Population::startMatch(Member& player1, Member& player2, bool log = false) {
 
 		board.performMove(chosenPosition);
 
-		if (log) {
-			board.print();
+		if (outStream) {
+			*outStream << board.toString();
 		}
 
 	}

@@ -35,5 +35,5 @@ public:
 	int getNumTurns();
 	int getCurrentPlayer();
 	int getWinner();
-	void print();
+	std::string toString();
 };

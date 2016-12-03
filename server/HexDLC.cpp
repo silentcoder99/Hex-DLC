@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "FileIO.h"
 #include <iostream>
+#include <sstream>
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -118,4 +119,12 @@ void HexDLC::setPopulation(Population pop)
 std::string HexDLC::getState()
 {
 	return mPopulation.save();
+}
+
+std::string HexDLC::getMatch()
+{
+	Member champion = getChampion();
+	std::stringstream ss;
+	mPopulation.startMatch(champion, champion, &ss);
+	return ss.str();
 }

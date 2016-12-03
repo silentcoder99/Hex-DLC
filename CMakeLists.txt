@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(Hex-DLC)
+
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set (SERVER_SRC
@@ -29,7 +30,9 @@ set(CLIENT_SRC
 	client/Source.cpp)	
 
 include_directories("external/websocketpp")
+include_directories("external/pugixml/src")
 
+add_subdirectory("external/pugixml")
 set(Boost_USE_STATIC_LIBS	ON)
 set(Boost_USE_MULTITHREADED	ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
@@ -46,10 +49,17 @@ include_directories(${Boost_INCLUDE_DIR})
 
 find_package( Threads )
 
+# Create project
 add_executable(Hex-DLCServer ${SERVER_SRC} ${SERVER_HEADER})
+
+# Boost
 target_link_libraries(Hex-DLCServer ${Boost_LIBRARIES})
 
+# Threading
 target_link_libraries(Hex-DLCServer ${CMAKE_THREAD_LIBS_INIT})
+
+# XML
+target_link_libraries(Hex-DLCServer pugixml)
 
 add_executable(Hex-DLCClient ${CLIENT_SRC})
 target_link_libraries(Hex-DLCClient ${Boost_LIBRARIES})

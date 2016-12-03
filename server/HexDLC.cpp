@@ -114,3 +114,8 @@ void HexDLC::setPopulation(Population pop)
 {
 	mNewPopulation = new Population(pop);
 }
+
+std::string HexDLC::getState()
+{
+	return mPopulation.save();
+}

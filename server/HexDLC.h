@@ -19,6 +19,8 @@ public:
 	double getRunningTime();
 
 	void setPopulation(Population pop);
+
+	std::string getState();
 private:
 	Population mPopulation;
 	bool mDLCRunning = true;

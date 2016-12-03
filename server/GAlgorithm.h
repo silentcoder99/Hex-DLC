@@ -50,6 +50,8 @@ public:
 	void setMember(Member, int);
 	void addMember(Member);
 
+	std::string save();
+
 	static std::pair<Member, Member> crossover(Member, Member);
 	static Member mutate(Member);
 	static Population evolve(Population);

@@ -84,6 +84,11 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 		double runTime = mHexDLC.getRunningTime();
 		mServer.send(hdl, std::to_string(runTime), websocketpp::frame::opcode::text);
 	}
+	else if (payload == "getState") {
+		std::string state = mHexDLC.getState();
+		mServer.send(hdl, state, websocketpp::frame::opcode::text);
+	}
+
 	else {
 		mServer.send(hdl, "Server does not understand the command " + msg->get_payload(), websocketpp::frame::opcode::text);
 	}

@@ -3,12 +3,17 @@
 #include "MyRandom.h"
 #include <math.h>
 #include <iostream>
+#include <sstream>
 #include "WorkerThread.h"
+
+#include "FileIO.h"
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <queue>
+
+#include <pugixml.hpp>
 
 Population::Population(bool init): m_members(std::vector<Member>()) {
 	if (init) {
@@ -33,6 +38,36 @@ void Population::setMember(Member member, int index) {
 void Population::addMember(Member member) {
 	m_members.push_back(member);
 	m_numMembers = m_members.size();
+}
+
+std::string Population::save()
+{
+	using namespace pugi;
+
+	xml_document doc;
+	xml_node populationNode = doc.append_child("population");
+
+	populationNode.append_child("populationSize").append_child(node_pcdata).set_value(std::to_string(POP_SIZE).c_str());
+	populationNode.append_child("tournamentSize").append_child(node_pcdata).set_value(std::to_string(TOURNAMENT_SIZE).c_str());
+	populationNode.append_child("elitismSize").append_child(node_pcdata).set_value(std::to_string(ELITISM_SIZE).c_str());
+	populationNode.append_child("mutationRate").append_child(node_pcdata).set_value(std::to_string(MUTATION_RATE).c_str());
+	populationNode.append_child("winReward").append_child(node_pcdata).set_value(std::to_string(WIN_REWARD).c_str());
+
+	xml_node layerSizesNode = populationNode.append_child("layerSizes");
+
+	for (int layerSize : LAYER_SIZES) {
+		layerSizesNode.append_child("layer").append_child(node_pcdata).set_value(std::to_string(layerSize).c_str());
+	}
+
+	std::string populationWeights = FileIO::populationToString(this);
+	
+	populationNode.append_child("members").append_child(node_pcdata).set_value(populationWeights.c_str());
+
+	std::stringstream ss;
+	doc.save(ss);
+
+	return ss.str();
+
 }
 
 int Population::startMatch(Member& player1, Member& player2, bool log = false) {

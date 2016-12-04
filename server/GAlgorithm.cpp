@@ -13,17 +13,27 @@
 
 #include <queue>
 
-#include <pugixml.hpp>
 
-Population::Population(bool init): m_members(std::vector<Member>()) {
-	if (init) {
-		for (int i = 0; i < POP_SIZE; i++) {
-			m_members.push_back(Member());
-		}
-		m_numMembers = POP_SIZE;
-	}
-	else {
-		m_numMembers = 0;
+// Tag names
+#define POPULATION_TAG "population"
+#define POPULATION_SIZE_ATTR "populationSize"
+#define TOURNAMENT_SIZE_ATTR "tournamentSize"
+#define ELITISM_SIZE_ATTR "elitismSize"
+#define MUTATION_RATE_ATTR "mutationRate"
+#define WIN_REWARD_ATTR "winReward"
+#define INVALID_MOVE_PENALTY_ATTR "invalidMovePenalty"
+#define LAYER_SIZES_TAG "layerSizes"
+#define LAYER_TAG "layer"
+#define MEMBER_COLLECTION_TAG "members"
+#define MEMBER_ELEMENT_TAG "member"
+
+Population::Population() {
+	
+}
+
+void Population::populate(int numNewMembers) {
+	for (int i = 0; i < numNewMembers; i++) {
+		m_members.push_back(Member(m_layerSizes));
 	}
 }
 
@@ -37,7 +47,15 @@ void Population::setMember(Member member, int index) {
 
 void Population::addMember(Member member) {
 	m_members.push_back(member);
-	m_numMembers = m_members.size();
+}
+
+pugi::xml_node Population::saveMember(Member member) {
+	Array<double> weights = member.m_network.getWeights();
+	std::string weightsString = FileIO::doubleArrayToString(weights);
+	pugi::xml_node node;
+	node.set_name(MEMBER_ELEMENT_TAG);
+	node.append_child(pugi::node_pcdata).set_value(weightsString.c_str());
+	return node;
 }
 
 std::string Population::save()
@@ -45,28 +63,71 @@ std::string Population::save()
 	using namespace pugi;
 
 	xml_document doc;
-	xml_node populationNode = doc.append_child("population");
+	xml_node populationNode = doc.append_child(POPULATION_TAG);
 
-	populationNode.append_child("populationSize").append_child(node_pcdata).set_value(std::to_string(POP_SIZE).c_str());
-	populationNode.append_child("tournamentSize").append_child(node_pcdata).set_value(std::to_string(TOURNAMENT_SIZE).c_str());
-	populationNode.append_child("elitismSize").append_child(node_pcdata).set_value(std::to_string(ELITISM_SIZE).c_str());
-	populationNode.append_child("mutationRate").append_child(node_pcdata).set_value(std::to_string(MUTATION_RATE).c_str());
-	populationNode.append_child("winReward").append_child(node_pcdata).set_value(std::to_string(WIN_REWARD).c_str());
+	populationNode.append_attribute(POPULATION_SIZE_ATTR).set_value(m_members.size());
+	populationNode.append_attribute(TOURNAMENT_SIZE_ATTR).set_value(m_tournamentSize);
+	populationNode.append_attribute(ELITISM_SIZE_ATTR).set_value(m_elitismSize);
+	populationNode.append_attribute(MUTATION_RATE_ATTR).set_value(m_mutationRate);
+	populationNode.append_attribute(WIN_REWARD_ATTR).set_value(m_winReward);
+	populationNode.append_attribute(INVALID_MOVE_PENALTY_ATTR).set_value(m_invalidMovePenalty);
 
-	xml_node layerSizesNode = populationNode.append_child("layerSizes");
+	xml_node layerSizesNode = populationNode.append_child(LAYER_SIZES_TAG);
 
-	for (int layerSize : LAYER_SIZES) {
-		layerSizesNode.append_child("layer").append_child(node_pcdata).set_value(std::to_string(layerSize).c_str());
+	for (int layerIndex = 0; layerIndex < m_layerSizes.size(); layerIndex++) {
+		layerSizesNode.append_child(LAYER_TAG).append_child(node_pcdata).set_value(std::to_string(m_layerSizes[layerIndex]).c_str());
 	}
-
-	std::string populationWeights = FileIO::populationToString(this);
 	
-	populationNode.append_child("members").append_child(node_pcdata).set_value(populationWeights.c_str());
+
+	xml_node membersNode = populationNode.append_child(MEMBER_COLLECTION_TAG);
+
+	//Save members
+	for (int i = 0; i < POP_SIZE; i++) {
+		membersNode.append_move(saveMember(getMember(i)));
+	}
 
 	std::stringstream ss;
 	doc.save(ss);
 
 	return ss.str();
+
+}
+
+void Population::load(std::string package) {
+	using namespace pugi;
+	xml_document doc;
+	doc.load_string(package.c_str());
+
+	xml_node populationNode = doc.child(POPULATION_TAG);
+
+	m_tournamentSize = populationNode.attribute(TOURNAMENT_SIZE_ATTR).as_int();
+	m_elitismSize = populationNode.attribute(ELITISM_SIZE_ATTR).as_int();
+	m_mutationRate = populationNode.attribute(MUTATION_RATE_ATTR).as_double();
+	m_winReward = populationNode.attribute(WIN_REWARD_ATTR).as_double();
+	m_invalidMovePenalty = populationNode.attribute(INVALID_MOVE_PENALTY_ATTR).as_double();
+
+	xml_node layerSizesNode = populationNode.child(LAYER_SIZES_TAG);
+	int layerCount = 0;
+	
+	for (xml_node layerNode : layerSizesNode.children()) {
+		layerCount++;
+	}
+
+	m_layerSizes = Array<int>(layerCount);
+
+	int layerIndex = 0;
+	for (xml_node layerNode : layerSizesNode.children()) {
+		m_layerSizes[layerIndex] = layerNode.text().as_int();
+		layerIndex++;
+	}
+	m_members.clear();
+	xml_node membersNode = populationNode.child(MEMBER_COLLECTION_TAG);
+
+	for (xml_node memberNode : membersNode) {
+		Member newMember = Member(m_layerSizes);
+		newMember.m_network.setWeights(FileIO::stringToDoubleArray(memberNode.text().as_string()));
+		addMember(newMember);
+	}
 
 }
 
@@ -138,12 +199,15 @@ int Population::startMatch(Member& player1, Member& player2, std::ostream* outSt
 			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
 			chosenPosition = emptyPos;
 
-			//Penalize player for performing an illegal move
-			if (board.getCurrentPlayer() == 1) {
-				player1.m_score -= INVALID_MOVE_PENALTY;
-			}
-			else if (board.getCurrentPlayer() == 2) {
-				player2.m_score -= INVALID_MOVE_PENALTY;
+			// If we are printing, don't apply penalties, blank match
+			if (!outStream) {
+				//Penalize player for performing an illegal move
+				if (board.getCurrentPlayer() == 1) {
+					player1.m_score -= m_invalidMovePenalty;
+				}
+				else if (board.getCurrentPlayer() == 2) {
+					player2.m_score -= m_invalidMovePenalty;
+				}
 			}
 		}
 
@@ -162,15 +226,15 @@ void Population::scoreMembers() {
 	ThreadSafeStack<std::function<void()>> taskStack;
 
 	//Each player plays all players above them (P2 plays P3, P4, P5, etc.)
-	for (int i = 0; i < m_numMembers; i++) {
-		for (int j = i + 1; j < m_numMembers; j++) {
+	for (int i = 0; i < m_members.size(); i++) {
+		for (int j = i + 1; j < m_members.size(); j++) {
 			//Award AI's for winning
 			taskStack.push([this, i, j]() {
 				if (startMatch(m_members[i], m_members[j]) == 1) {
-					m_members[i].m_score += WIN_REWARD;
+					m_members[i].m_score += m_winReward;
 				}
 				else {
-					m_members[j].m_score += WIN_REWARD;
+					m_members[j].m_score += m_winReward;
 				}
 			});
 		}
@@ -182,8 +246,13 @@ void Population::scoreMembers() {
 		threadStack.push(new WorkerThread(taskStack));
 	}
 
+	// Destroy threads after they are done
 	while (!threadStack.empty()) {
+
+		// Wait till done
 		threadStack.front()->join();
+
+		// Destroy thread
 		delete threadStack.front();
 		threadStack.pop();
 	}
@@ -222,16 +291,20 @@ void Population::sortMembers(int start, int end) {
 Member Population::tournamentSelect() {
 	MyRandom rnd = MyRandom();
 	double bestScore = 0;
-	Member bestMember;
+	Member* bestMember = nullptr;
 	
-	for (int i = 0; i < TOURNAMENT_SIZE; i++) {
-		Member choosen = m_members[rnd.integer(m_numMembers)];
+	for (int i = 0; i < m_tournamentSize; i++) {
+		if (bestMember == nullptr) {
+			bestMember = &m_members[rnd.integer(m_members.size())];
+			continue;
+		}
+		Member choosen = m_members[rnd.integer(m_members.size())];
 		
 		if (choosen.m_score > bestScore) {
-			bestMember = choosen;
+			bestMember = &choosen;
 		}
 	}
-	return bestMember;
+	return *bestMember;
 }
 
 std::pair<Member, Member> Population::crossover(Member member1, Member member2) {
@@ -249,15 +322,15 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 		}
 	}
 
-	Member child1 = Member();
-	Member child2 = Member();
+	Member child1 = Member(member1.m_network.getLayerSizes());
+	Member child2 = Member(member2.m_network.getLayerSizes());
 	child1.m_network.setWeights(firstWeights);
 	child2.m_network.setWeights(secondWeights);
 
 	return { child1, child2 };
 }
 
-Member::Member(): m_network(Network(NUM_INPUTS, LAYER_SIZES, NUM_OUTPUTS)) {
+Member::Member(Array<int> layerSizes): m_network(Network(NUM_INPUTS, layerSizes, NUM_OUTPUTS)) {
 	m_score = 0;
 }
 
@@ -267,7 +340,7 @@ Member Population::mutate(Member member) {
 	Array<double> weights = member.m_network.getWeights();
 
 	for (unsigned int i = 0; i < weights.size(); i++) {
-		if (rnd.real(0, 1) < MUTATION_RATE) {
+		if (rnd.real(0, 1) < m_mutationRate) {
 			weights[i] = rnd.real(-1, 1);
 		}
 	}
@@ -276,36 +349,54 @@ Member Population::mutate(Member member) {
 	return member;
 }
 
-Population Population::evolve(Population pop) {
+void Population::evolve() {
 
-	pop.scoreMembers();
-	pop.sortMembers();
+	scoreMembers();
+	sortMembers();
 
-	Population newPop = Population(false);
+	// Generates children to fill all but the elite
+	std::vector<Member> childGeneration = std::vector<Member>();
 
-	//Add top members from previous generation
-	for (int i = 0; i < ELITISM_SIZE; i++) {
-		Member elite = pop.getMember(POP_SIZE - i - 1);
-		elite.m_score = 0;
-		newPop.addMember(elite);
-	}
-
-	//Add children until pop size is reached
-	while (newPop.m_numMembers < POP_SIZE) {
-		Member parent1 = pop.tournamentSelect();
-		Member parent2 = pop.tournamentSelect();
+	// Create children
+	for (int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
+		Member parent1 = tournamentSelect();
+		Member parent2 = tournamentSelect();
 		std::pair<Member, Member> children = Population::crossover(parent1, parent2);
-		newPop.addMember(children.first);
-		if (newPop.m_numMembers < POP_SIZE) {
-			newPop.addMember(children.second);
+		childGeneration.push_back(children.first);
+		childIndex++;
+		if (childIndex < childGeneration.size()) {
+			childGeneration.push_back(children.second);
 		}
 	}
 
-	//Mutate new members
-	for (int i = 0; i < POP_SIZE; i++) {
-		Member mutant = Population::mutate(newPop.getMember(i));
-		newPop.setMember(mutant, i);
+	// Add children to population
+	for (int popIndex = 0; popIndex < childGeneration.size(); popIndex++) {
+		setMember(childGeneration[popIndex], popIndex);
 	}
-	
-	return newPop;
+
+	// Mutate new members
+	for (int i = 0; i < POP_SIZE; i++) {
+		Member mutant = Population::mutate(getMember(i));
+		setMember(mutant, i);
+	}
+
+	// Increment generation
+	m_generationCount++;
+}
+
+unsigned long Population::getGenerationCount() {
+	return m_generationCount;
+}
+
+void Population::setGenerationCount(unsigned long generationCount) {
+	m_generationCount = generationCount;
+}
+
+Array<int> Population::getLayerSizes() {
+	return m_layerSizes;
+}
+
+Member Population::getChampion() {
+	sortMembers();
+	return m_members[m_members.size() - 1];
 }

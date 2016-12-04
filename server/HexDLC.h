@@ -2,9 +2,16 @@
 
 #include <time.h>
 #include "GAlgorithm.h"
+#include <boost/thread.hpp>
 
 // Thread safe HexDLC code
 class HexDLC {
+	boost::mutex m_populationMutex;
+	Population m_population;
+	bool m_DLCRunning = true;
+
+	time_t m_runTime = 0;
+
 public:
 	HexDLC();
 	void run(); // Run this on different thread
@@ -13,7 +20,7 @@ public:
 	unsigned long int getGenerationCount();
 	void setGenerationCount(unsigned long int generationCount);
 
-	std::vector<int> getLayerSizes();
+	Array<int> getLayerSizes();
 	Population getPopulation();
 
 	double getRunningTime();
@@ -22,20 +29,5 @@ public:
 
 	std::string getState();
 	std::string getMatch();
-private:
-	Population mPopulation;
-	bool mDLCRunning = true;
 
-	bool mChampionRequested = false;
-	Member* mChampion = nullptr;
-
-	bool mPopulationRequested = false;
-	Population* mPopulationPointer = nullptr;
-
-	Population* mNewPopulation = nullptr;
-
-	bool mTimeRequested = false;
-	time_t mRunTime = 0;
-
-	unsigned long int mGenerationCount = 0;
 };

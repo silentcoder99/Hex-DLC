@@ -10,8 +10,6 @@ public:
 
 	static void saveWeightsToFile(std::string filename, Array<double> vector);
 	static std::vector<double> readWeightsFromFile(std::string filename);
-	static std::string populationToString(Population population);
-	static Population stringToPopulation(std::string filename);
 
 	static void logPrint(std::string str);
 };

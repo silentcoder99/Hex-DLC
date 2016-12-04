@@ -2,6 +2,7 @@
 #include <vector>
 #include "Network.h"
 #include "SuperArray.hpp"
+#include <pugixml.hpp>
 
 //Genetic parameters
 #define GENERATION_COUNT 50
@@ -30,29 +31,48 @@
 struct Member {
 	Network m_network;
 	double m_score;
-	Member();
+	Member(Array<int> layerSizes);
 };
 
 class Population {
 
-	int m_numMembers;
+	unsigned long m_generationCount = 0;
+	int m_tournamentSize = TOURNAMENT_SIZE;
+	int m_elitismSize = ELITISM_SIZE;
+	double m_mutationRate = MUTATION_RATE;
+	double m_winReward = WIN_REWARD;
+	double m_invalidMovePenalty = INVALID_MOVE_PENALTY;
+	Array<int> m_layerSizes = LAYER_SIZES;
+
 	Member tournamentSelect();
 	std::vector<Member> m_members;
 
 	int partitionMembers(int, int);
 
+	pugi::xml_node saveMember(Member);
+
 public:
 	int startMatch(Member&, Member&, std::ostream* = nullptr);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
-	Population(bool init);
+	Population();
+	void populate(int numNewMembers = POP_SIZE);
 	Member getMember(int);
 	void setMember(Member, int);
 	void addMember(Member);
 
+	Member getChampion();
+
+	// Returns a string representation of the population
 	std::string save();
+	void load(std::string package);
+
+	unsigned long getGenerationCount();
+	void setGenerationCount(unsigned long generationCount);
+
+	Array<int> getLayerSizes();
 
 	static std::pair<Member, Member> crossover(Member, Member);
-	static Member mutate(Member);
-	static Population evolve(Population);
+	Member mutate(Member);
+	void evolve();
 };

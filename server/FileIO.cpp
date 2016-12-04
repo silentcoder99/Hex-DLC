@@ -9,7 +9,10 @@ std::string FileIO::doubleArrayToString(Array<double> vector)
 {
 	std::stringstream ss;
 	for (int i = 0; i < vector.size(); i++) {
-		ss << std::setprecision(std::numeric_limits<double>::max_digits10) << vector[i] << ",";
+		ss << std::setprecision(std::numeric_limits<double>::max_digits10) << vector[i];
+		if (i != vector.size() - 1) {
+			ss << ",";
+		}
 	}
 
 	return ss.str();
@@ -69,35 +72,6 @@ std::vector<double> FileIO::readWeightsFromFile(std::string filename) {
 	return weights;
 }
 
-std::string FileIO::populationToString(Population population) {
-	std::stringstream ss;
-
-	//Save members
-	for (int i = 0; i < POP_SIZE; i++) {
-		Array<double> weights = population.getMember(i).m_network.getWeights();
-		ss << doubleArrayToString(weights);
-		ss << "\n";
-	}
-	return ss.str();
-}
-
-Population FileIO::stringToPopulation(std::string string) {
-	std::stringstream ss(string);
-	Population pop = Population(false);
-
-	std::string line;
-
-	while (std::getline(ss, line, '\n')) {
-		if (!line.empty()) {
-			Array<double> weights = stringToDoubleArray(line);
-			Member member = Member();
-			member.m_network.setWeights(weights);
-
-			pop.addMember(member);
-		}
-	}
-	return pop;
-}
 
 //Writes to the output stream as well as to log.txt
 void FileIO::logPrint(std::string str) {

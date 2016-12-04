@@ -54,15 +54,8 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 		long int generationCount = mHexDLC.getGenerationCount();
 		mServer.send(hdl, std::to_string(generationCount), websocketpp::frame::opcode::text);
 	}
-	else if (payload == "layerSizes") {
-		std::vector<int> layerSizes = mHexDLC.getLayerSizes();
-		std::stringstream ss;
-		for (auto layer : layerSizes) {
-			ss << layer << ",";
-		}
-		mServer.send(hdl, ss.str(), websocketpp::frame::opcode::text);
-	}
 	else if (payload.find("setGenCount ") == 0) {
+		// Requsted Gencount to set to
 		std::string genCountString = payload.substr(12, payload.length() - 12);
 		unsigned long int genCount = std::stoul(genCountString);
 		mHexDLC.setGenerationCount(genCount);
@@ -70,23 +63,20 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 	}
 	else if (payload == "population") {
 		Population pop = mHexDLC.getPopulation();
-		std::string serializedPop = FileIO::populationToString(pop);
+		std::string serializedPop = pop.save();
 		mServer.send(hdl, serializedPop, websocketpp::frame::opcode::text);
 	}
 	else if (payload.find("setPopulation") == 0) {
 		int firstLineBreak = payload.find_first_of('\n');
 		std::string serializedPop = payload.substr(firstLineBreak + 1, payload.length() - firstLineBreak - 1);
-		Population pop = FileIO::stringToPopulation(serializedPop);
+		Population pop;
+		pop.load(serializedPop);
 		mHexDLC.setPopulation(pop);
 		mServer.send(hdl, "Population set", websocketpp::frame::opcode::text);
 	}
 	else if (payload == "runTime") {
 		double runTime = mHexDLC.getRunningTime();
 		mServer.send(hdl, std::to_string(runTime), websocketpp::frame::opcode::text);
-	}
-	else if (payload == "getState") {
-		std::string state = mHexDLC.getState();
-		mServer.send(hdl, state, websocketpp::frame::opcode::text);
 	}
 	else if (payload == "getMatch") {
 		std::string match = mHexDLC.getMatch();

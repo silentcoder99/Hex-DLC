@@ -30,6 +30,7 @@ public:
 	int getNumWeights();
 	Array<double> getWeights();
 	void setWeights(Array<double>);
+	Array<int> getLayerSizes();
 };
 
 inline double sigmoid(double x) {

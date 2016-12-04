@@ -163,3 +163,7 @@ void Network::setWeights(Array<double> weights) {
 		}
 	}
 }
+
+Array<int> Network::getLayerSizes() {
+	return m_layerSizes;
+}

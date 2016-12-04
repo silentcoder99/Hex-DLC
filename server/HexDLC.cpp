@@ -12,119 +12,76 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-HexDLC::HexDLC() :mPopulation(true)
+HexDLC::HexDLC()
 {
+	m_population.populate();
 }
 
 void HexDLC::run() {
 
-	time_t initialTime;
-	bool benchmarkRunning = false;
+	while (m_DLCRunning) {
 
-	while (mDLCRunning) {
-		mPopulation = Population::evolve(mPopulation);
+		clock_t initialTime = clock();
+		// The real process
+		m_populationMutex.lock();
 
-		if (mChampionRequested) {
-			mPopulation.sortMembers();
-			mChampion = new Member(mPopulation.getMember(POP_SIZE - 1));
-			mChampionRequested = false;
-		}
+		m_population.evolve();
 
-		if (mPopulationRequested) {
-			mPopulationPointer = new Population(mPopulation);
-			mPopulationRequested = false;
-		}
+		m_populationMutex.unlock();
 
-		mGenerationCount++;
-		if (mNewPopulation != nullptr) {
-			mPopulation = *mNewPopulation;
-			delete mNewPopulation;
-			mNewPopulation = nullptr;
-
-			mGenerationCount = 0;
-		}
-
-		if (benchmarkRunning) {
-			mRunTime = clock() - initialTime;
-			benchmarkRunning = false;
-			mTimeRequested = false;
-		}
-
-		if (mTimeRequested) {
-			initialTime = clock();
-			benchmarkRunning = true;
-		}
+		m_runTime = clock() - initialTime;
 	}
 }
-
 void HexDLC::stop()
 {
-	mDLCRunning = false;
+	m_DLCRunning = false;
 }
 
 Member HexDLC::getChampion()
 {
-	mChampionRequested = true;
-	while (mChampion == nullptr) {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-	}
-	Member champion = *mChampion;
-	delete mChampion;
-	mChampion = nullptr;
-	return champion;
+	boost::lock_guard<boost::mutex> lock(m_populationMutex);
+	return m_population.getChampion();
 }
 
 unsigned long int HexDLC::getGenerationCount() {
-	return mGenerationCount;
+	return m_population.getGenerationCount();
 }
 
 void HexDLC::setGenerationCount(unsigned long int generationCount)
 {
-	mGenerationCount = generationCount;
+	m_population.setGenerationCount(generationCount);
 }
 
-std::vector<int> HexDLC::getLayerSizes() {
-	return LAYER_SIZES;
+Array<int> HexDLC::getLayerSizes() {
+	return m_population.getLayerSizes();
 }
 
 Population HexDLC::getPopulation()
 {
-	mPopulationRequested = true;
-	while (mPopulationPointer == nullptr) {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-	}
-	Population pop = *mPopulationPointer;
-	delete mPopulationPointer;
-	mPopulationPointer = nullptr;
-	return pop;
+	boost::lock_guard<boost::mutex> lock(m_populationMutex);
+	return m_population;
 }
 
 double HexDLC::getRunningTime()
 {
-	mTimeRequested = true;
-	while (mRunTime == 0) {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-	}
-	double runningTime = (float)mRunTime / CLOCKS_PER_SEC;
-
-	mRunTime = 0;
-	return runningTime;
+	return m_runTime;
 }
 
 void HexDLC::setPopulation(Population pop)
 {
-	mNewPopulation = new Population(pop);
+	boost::lock_guard<boost::mutex> lock(m_populationMutex);
+	m_population = pop;
 }
 
 std::string HexDLC::getState()
 {
-	return mPopulation.save();
+	return m_population.save();
 }
 
 std::string HexDLC::getMatch()
 {
 	Member champion = getChampion();
 	std::stringstream ss;
-	mPopulation.startMatch(champion, champion, &ss);
+	m_population.startMatch(champion, champion, &ss);
 	return ss.str();
 }

@@ -8,6 +8,10 @@ set (SERVER_SRC
 	server/FileIO.cpp
 	server/genetics/GAlgorithm.cpp
 	server/genetics/TournamentSelection.cpp
+
+    server/Logger.cpp
+    server/log/STDOutLogger.cpp
+
 	server/Game.cpp
 	server/MyRandom.cpp
 	server/genetics/Network.cpp
@@ -22,6 +26,10 @@ set (SERVER_HEADER
 	server/genetics/Member.h
 	server/genetics/TournamentSelection.h
 	server/genetics/SelectionAlgorithm.h
+
+    server/Logger.h
+    server/log/STDOutLogger.h
+
 	server/Game.h
 	server/MyRandom.h
 	server/genetics/Network.h

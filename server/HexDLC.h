@@ -1,7 +1,7 @@
 #pragma once
 
 #include <time.h>
-#include "GAlgorithm.h"
+#include "genetics/GAlgorithm.h"
 #include <boost/thread.hpp>
 
 // Thread safe HexDLC code

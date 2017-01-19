@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Network.h"
+#include "Member.h"
 #include "SuperArray.hpp"
 #include <pugixml.hpp>
 
@@ -28,12 +28,6 @@
 //5. Mutate new population
 //6. Repeat steps 2 to 6
 
-struct Member {
-	Network m_network;
-	double m_score;
-	Member(Array<int> layerSizes);
-};
-
 class Population {
 
 	unsigned long m_generationCount = 0;
@@ -44,7 +38,6 @@ class Population {
 	double m_invalidMovePenalty = INVALID_MOVE_PENALTY;
 	Array<int> m_layerSizes = LAYER_SIZES;
 
-	Member tournamentSelect();
 	std::vector<Member> m_members;
 
 	int partitionMembers(int, int);

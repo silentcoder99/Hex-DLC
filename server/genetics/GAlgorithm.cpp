@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include "WorkerThread.h"
+#include "TournamentSelection.h"
 
 #include "FileIO.h"
 
@@ -288,25 +289,6 @@ void Population::sortMembers(int start, int end) {
 	}
 }
 
-Member Population::tournamentSelect() {
-	MyRandom rnd = MyRandom();
-	double bestScore = 0;
-	Member* bestMember = nullptr;
-	
-	for (int i = 0; i < m_tournamentSize; i++) {
-		if (bestMember == nullptr) {
-			bestMember = &m_members[rnd.integer(m_members.size())];
-			continue;
-		}
-		Member choosen = m_members[rnd.integer(m_members.size())];
-		
-		if (choosen.m_score > bestScore) {
-			bestMember = &choosen;
-		}
-	}
-	return *bestMember;
-}
-
 std::pair<Member, Member> Population::crossover(Member member1, Member member2) {
 	//Creates 2 new children using randomly selected weights from each parent
 	MyRandom rnd = MyRandom();
@@ -357,10 +339,12 @@ void Population::evolve() {
 	// Generates children to fill all but the elite
 	std::vector<Member> childGeneration = std::vector<Member>();
 
+	SelectionAlgorithm* selectionAlgorithm = new TournamentSelection(m_members, m_tournamentSize);
+
 	// Create children
 	for (int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
-		Member parent1 = tournamentSelect();
-		Member parent2 = tournamentSelect();
+		Member& parent1 = selectionAlgorithm->select();
+		Member& parent2 = selectionAlgorithm->select();
 		std::pair<Member, Member> children = Population::crossover(parent1, parent2);
 		childGeneration.push_back(children.first);
 		childIndex++;
@@ -369,6 +353,7 @@ void Population::evolve() {
 		}
 	}
 
+	delete selectionAlgorithm;
 	// Add children to population
 	for (int popIndex = 0; popIndex < childGeneration.size(); popIndex++) {
 		setMember(childGeneration[popIndex], popIndex);

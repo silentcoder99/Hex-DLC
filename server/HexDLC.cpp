@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include "MyRandom.h"
-#include "Network.h"
 #include "Game.h"
 #include "FileIO.h"
 #include <iostream>

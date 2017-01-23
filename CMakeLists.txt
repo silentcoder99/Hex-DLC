@@ -40,7 +40,10 @@ set (SERVER_HEADER
 	server/WorkerThread.h)
 	
 set(CLIENT_SRC
-	client/Source.cpp)	
+	client/Source.cpp)
+
+set(SERVER_TEST_SRC
+	test/Vec2Test.cpp)
 
 include_directories("external/websocketpp")
 include_directories("external/pugixml/src")
@@ -66,14 +69,13 @@ find_package( Threads )
 # Create project
 add_executable(Hex-DLCServer ${SERVER_SRC} ${SERVER_HEADER})
 
+add_executable(Hex-DLCServerTest ${SERVER_TEST_SRC})
+
+set(HexDLCLibraries ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} pugixml) 
 # Boost
-target_link_libraries(Hex-DLCServer ${Boost_LIBRARIES})
+target_link_libraries(Hex-DLCServer ${HexDLCLibraries})
 
-# Threading
-target_link_libraries(Hex-DLCServer ${CMAKE_THREAD_LIBS_INIT})
-
-# XML
-target_link_libraries(Hex-DLCServer pugixml)
+target_link_libraries(Hex-DLCServerTest ${HexDLCLibraries})
 
 add_executable(Hex-DLCClient ${CLIENT_SRC})
 target_link_libraries(Hex-DLCClient ${Boost_LIBRARIES})

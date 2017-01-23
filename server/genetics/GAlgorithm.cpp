@@ -339,7 +339,7 @@ void Population::evolve() {
 	// Generates children to fill all but the elite
 	std::vector<Member> childGeneration = std::vector<Member>();
 
-	SelectionAlgorithm* selectionAlgorithm = new TournamentSelection(m_members, m_tournamentSize);
+	std::unique_ptr<SelectionAlgorithm> selectionAlgorithm(new TournamentSelection(m_members, m_tournamentSize));
 
 	// Create children
 	for (int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
@@ -353,7 +353,6 @@ void Population::evolve() {
 		}
 	}
 
-	delete selectionAlgorithm;
 	// Add children to population
 	for (int popIndex = 0; popIndex < childGeneration.size(); popIndex++) {
 		setMember(childGeneration[popIndex], popIndex);

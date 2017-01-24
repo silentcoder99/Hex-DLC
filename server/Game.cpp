@@ -44,7 +44,9 @@ void Board::setValue(Vec2 pos, int value) {
 
 // returns distance between points
 double distanceHeuristic(Vec2 firstPos, Vec2 secondPos) {
-	return firstPos.distanceSquared(secondPos);
+    float xDifference = (firstPos.x + 0.5 * firstPos.y) - (secondPos.x + 0.5 * secondPos.y);
+    float yDifference = firstPos.y - secondPos.y;
+    return xDifference * xDifference + yDifference * yDifference;
 }
 
 Vec2 Board::findNearestEmpty(Vec2 position) {

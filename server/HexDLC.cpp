@@ -6,6 +6,7 @@
 #include "FileIO.h"
 #include <iostream>
 #include <sstream>
+#include "Logger.h"
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -26,6 +27,8 @@ void HexDLC::run() {
 
 		m_population.evolve();
 
+        std::string message = "Generation Number " + std::to_string(m_population.getGenerationCount()) + " Evolved";
+        Logger::getInstance()->logInfo(message, 1);
 		m_populationMutex.unlock();
 
 		m_runTime = clock() - initialTime;

@@ -40,7 +40,7 @@ void DLCServer::onMessage(websocketpp::connection_hdl hdl, WebsocketServer::mess
 	std::string payload = msg->get_payload();
 	if (payload == "champ") {
 		Member champion = mHexDLC.getChampion();
-		std::string weights = FileIO::doubleArrayToString(champion.m_network.getWeights());
+		std::string weights = FileIO::doubleArrayToString(champion.getNetwork().getWeights());
 
 		mServer.send(hdl, weights, websocketpp::frame::opcode::text);
 	}

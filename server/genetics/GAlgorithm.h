@@ -14,9 +14,7 @@
 #define INVALID_MOVE_PENALTY 0
 
 //Network parameters
-#define NUM_INPUTS 121
 #define LAYER_SIZES {50, 20}
-#define NUM_OUTPUTS 2
 
 #define NUM_THREADS 8
 

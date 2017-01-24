@@ -17,7 +17,7 @@ Member& TournamentSelection::select(){
 	
 	for (int i = 0; i < m_tournamentSize; i++) {
 		int compeditorMemberIndex = rnd.integer(m_members.size());
-		int compeditorMemberScore = m_members[compeditorMemberIndex].m_score;
+		int compeditorMemberScore = m_members[compeditorMemberIndex].getScore();
 		
 		if (compeditorMemberScore > bestScore) {
 			bestMemberIndex = compeditorMemberIndex;

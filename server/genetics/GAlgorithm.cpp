@@ -51,7 +51,7 @@ void Population::addMember(Member member) {
 }
 
 pugi::xml_node Population::saveMember(Member member) {
-	Array<double> weights = member.m_network.getWeights();
+	Array<double> weights = member.getNetwork().getWeights();
 	std::string weightsString = FileIO::doubleArrayToString(weights);
 	pugi::xml_node node;
 	node.set_name(MEMBER_ELEMENT_TAG);
@@ -126,7 +126,7 @@ void Population::load(std::string package) {
 
 	for (xml_node memberNode : membersNode) {
 		Member newMember = Member(m_layerSizes);
-		newMember.m_network.setWeights(FileIO::stringToDoubleArray(memberNode.text().as_string()));
+		newMember.getNetwork().setWeights(FileIO::stringToDoubleArray(memberNode.text().as_string()));
 		addMember(newMember);
 	}
 
@@ -174,7 +174,7 @@ int Population::startMatch(Member& player1, Member& player2, std::ostream* outSt
 
 		if (board.getCurrentPlayer() == 1) {
 			// Get Output
-			output = player1.m_network.getOutput(input);
+			output = player1.getNetwork().getOutput(input);
 
 			//Convert from decimal to integer output
 			output[0] = floor(output[0] * BOARD_SIZE);
@@ -182,7 +182,7 @@ int Population::startMatch(Member& player1, Member& player2, std::ostream* outSt
 		}
 		else if (board.getCurrentPlayer() == 2) {
 			// Get Output
-			output = player2.m_network.getOutput(input);
+			output = player2.getNetwork().getOutput(input);
 
 			//Convert from decimal to integer output
 			output[0] = floor(output[0] * BOARD_SIZE);
@@ -204,10 +204,10 @@ int Population::startMatch(Member& player1, Member& player2, std::ostream* outSt
 			if (!outStream) {
 				//Penalize player for performing an illegal move
 				if (board.getCurrentPlayer() == 1) {
-					player1.m_score -= m_invalidMovePenalty;
+					player1.takeScore(m_invalidMovePenalty);
 				}
 				else if (board.getCurrentPlayer() == 2) {
-					player2.m_score -= m_invalidMovePenalty;
+					player2.takeScore(m_invalidMovePenalty);
 				}
 			}
 		}
@@ -232,10 +232,10 @@ void Population::scoreMembers() {
 			//Award AI's for winning
 			taskStack.push([this, i, j]() {
 				if (startMatch(m_members[i], m_members[j]) == 1) {
-					m_members[i].m_score += m_winReward;
+					m_members[i].addScore(m_winReward);
 				}
 				else {
-					m_members[j].m_score += m_winReward;
+					m_members[j].addScore(m_winReward);
 				}
 			});
 		}
@@ -262,10 +262,10 @@ void Population::scoreMembers() {
 
 int Population::partitionMembers(int start, int end) {
 	int low = start;
-	double pivot = m_members[end].m_score;
+	double pivot = m_members[end].getScore();
 
 	for (int i = start; i < end; i++) {
-		if (m_members[i].m_score <= pivot) {
+		if (m_members[i].getScore() <= pivot) {
 			Member temp = m_members[low];
 			m_members[low] = m_members[i];
 			m_members[i] = temp;
@@ -293,8 +293,8 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 	//Creates 2 new children using randomly selected weights from each parent
 	MyRandom rnd = MyRandom();
 
-	Array<double> firstWeights = member1.m_network.getWeights();
-	Array<double> secondWeights = member2.m_network.getWeights();
+	Array<double> firstWeights = member1.getNetwork().getWeights();
+	Array<double> secondWeights = member2.getNetwork().getWeights();
 
 	for (unsigned int i = 0; i < firstWeights.size(); i++) {
 		if (rnd.integer(2) == 1) {
@@ -304,22 +304,20 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 		}
 	}
 
-	Member child1 = Member(member1.m_network.getLayerSizes());
-	Member child2 = Member(member2.m_network.getLayerSizes());
-	child1.m_network.setWeights(firstWeights);
-	child2.m_network.setWeights(secondWeights);
+	Member child1 = Member(member1.getNetwork().getLayerSizes());
+	Member child2 = Member(member2.getNetwork().getLayerSizes());
+	child1.getNetwork().setWeights(firstWeights);
+	child2.getNetwork().setWeights(secondWeights);
 
 	return { child1, child2 };
 }
 
-Member::Member(Array<int> layerSizes): m_network(Network(NUM_INPUTS, layerSizes, NUM_OUTPUTS)) {
-	m_score = 0;
-}
+
 
 Member Population::mutate(Member member) {
 	MyRandom rnd = MyRandom();
 
-	Array<double> weights = member.m_network.getWeights();
+	Array<double> weights = member.getNetwork().getWeights();
 
 	for (unsigned int i = 0; i < weights.size(); i++) {
 		if (rnd.real(0, 1) < m_mutationRate) {
@@ -327,7 +325,7 @@ Member Population::mutate(Member member) {
 		}
 	}
 
-	member.m_network.setWeights(weights);
+	member.getNetwork().setWeights(weights);
 	return member;
 }
 

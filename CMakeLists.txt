@@ -8,6 +8,7 @@ set (SERVER_SRC
 	server/FileIO.cpp
 	server/genetics/GAlgorithm.cpp
 	server/genetics/TournamentSelection.cpp
+    server/genetics/Member.cpp
 
     server/Logger.cpp
     server/log/STDOutLogger.cpp

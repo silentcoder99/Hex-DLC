@@ -13,6 +13,7 @@
 
 class SelectionAlgorithm{
 public:
+    virtual ~SelectionAlgorithm(){};
 	// Returns the index of the member selected
 	virtual Member& select() = 0;
 };

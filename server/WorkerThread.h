@@ -1,6 +1,6 @@
 #include <boost/thread.hpp>
 #include <stack>
-#include "ThreadSafeStack.hpp"
+#include "util/ThreadSafeStack.hpp"
 
 class WorkerThread {
 public:

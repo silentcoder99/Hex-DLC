@@ -1,6 +1,6 @@
 #pragma once
 #include "Network.h"
-#include "SuperArray.hpp"
+#include "util/SuperArray.hpp"
 
 #define NUM_INPUTS 121
 #define NUM_OUTPUTS 2

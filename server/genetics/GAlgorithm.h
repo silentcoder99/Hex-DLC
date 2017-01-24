@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Member.h"
-#include "SuperArray.hpp"
+#include "util/SuperArray.hpp"
 #include <pugixml.hpp>
 
 //Genetic parameters

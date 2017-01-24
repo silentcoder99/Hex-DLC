@@ -1,7 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Game.h"
-#include "FileIO.h"
+#include "util/FileIO.h"
 
 Board::Board() {
 	//Set initial board state

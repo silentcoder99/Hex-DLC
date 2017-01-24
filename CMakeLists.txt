@@ -5,39 +5,41 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set (SERVER_SRC
-	server/FileIO.cpp
+	server/util/FileIO.cpp
+
 	server/genetics/GAlgorithm.cpp
 	server/genetics/TournamentSelection.cpp
     server/genetics/Member.cpp
+	server/genetics/Network.cpp
 
     server/Logger.cpp
     server/log/STDOutLogger.cpp
 
 	server/Game.cpp
 	server/MyRandom.cpp
-	server/genetics/Network.cpp
 	server/Server.cpp
 	server/HexDLC.cpp
 	server/Source.cpp
 	server/WorkerThread.cpp)
 
 set (SERVER_HEADER
-	server/FileIO.h
+	server/util/FileIO.h
+	server/util/SuperArray.hpp
+	server/util/Vec2.hpp
+
 	server/genetics/GAlgorithm.h
 	server/genetics/Member.h
 	server/genetics/TournamentSelection.h
 	server/genetics/SelectionAlgorithm.h
+	server/genetics/Network.h
 
     server/Logger.h
     server/log/STDOutLogger.h
 
 	server/Game.h
 	server/MyRandom.h
-	server/genetics/Network.h
-	server/SuperArray.hpp
 	server/Server.h
 	server/HexDLC.h
-	server/Vec2.hpp
 	server/WorkerThread.h)
 	
 set(CLIENT_SRC

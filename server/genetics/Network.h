@@ -1,7 +1,7 @@
 #pragma once 
 #include <vector>
 #include <math.h>
-#include "SuperArray.hpp"
+#include "util/SuperArray.hpp"
 
 struct Neuron {
 	int m_numWeights;

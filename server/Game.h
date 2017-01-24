@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <vector>
-#include "Vec2.hpp"
+#include "util/Vec2.hpp"
 #include <list>
 #include <unordered_set>
 

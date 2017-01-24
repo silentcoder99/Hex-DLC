@@ -7,7 +7,7 @@
 #include "WorkerThread.h"
 #include "TournamentSelection.h"
 
-#include "FileIO.h"
+#include "util/FileIO.h"
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

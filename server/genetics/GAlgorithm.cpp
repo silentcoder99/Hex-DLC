@@ -337,12 +337,12 @@ void Population::evolve() {
 	// Generates children to fill all but the elite
 	std::vector<Member> childGeneration = std::vector<Member>();
 
-	std::unique_ptr<SelectionAlgorithm> selectionAlgorithm(new TournamentSelection(m_members, m_tournamentSize));
+    TournamentSelection selectionAlgorithm(m_members, m_tournamentSize);
 
 	// Create children
 	for (int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
-		Member& parent1 = selectionAlgorithm->select();
-		Member& parent2 = selectionAlgorithm->select();
+		Member& parent1 = selectionAlgorithm.select();
+		Member& parent2 = selectionAlgorithm.select();
 		std::pair<Member, Member> children = Population::crossover(parent1, parent2);
 		childGeneration.push_back(children.first);
 		childIndex++;

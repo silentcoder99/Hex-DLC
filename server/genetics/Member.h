@@ -19,4 +19,6 @@ public:
 
     // Network
     Network& getNetwork();
+
+    void mutate(int mutationRate);
 };

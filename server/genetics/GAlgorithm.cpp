@@ -38,7 +38,7 @@ void Population::populate(int numNewMembers) {
 	}
 }
 
-Member Population::getMember(int index) {
+Member& Population::getMember(int index) {
 	return m_members[index];
 }
 
@@ -313,22 +313,6 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 }
 
 
-
-Member Population::mutate(Member member) {
-	MyRandom rnd = MyRandom();
-
-	Array<double> weights = member.getNetwork().getWeights();
-
-	for (unsigned int i = 0; i < weights.size(); i++) {
-		if (rnd.real(0, 1) < m_mutationRate) {
-			weights[i] = rnd.real(-1, 1);
-		}
-	}
-
-	member.getNetwork().setWeights(weights);
-	return member;
-}
-
 void Population::evolve() {
 
 	scoreMembers();
@@ -358,8 +342,7 @@ void Population::evolve() {
 
 	// Mutate new members
 	for (int i = 0; i < POP_SIZE; i++) {
-		Member mutant = Population::mutate(getMember(i));
-		setMember(mutant, i);
+		getMember(i).mutate(m_mutationRate);
 	}
 
 	// Increment generation

@@ -48,7 +48,7 @@ public:
 	void scoreMembers();
 	Population();
 	void populate(int numNewMembers = POP_SIZE);
-	Member getMember(int);
+	Member& getMember(int);
 	void setMember(Member, int);
 	void addMember(Member);
 
@@ -64,6 +64,5 @@ public:
 	Array<int> getLayerSizes();
 
 	static std::pair<Member, Member> crossover(Member, Member);
-	Member mutate(Member);
 	void evolve();
 };

@@ -1,4 +1,5 @@
 #include "Member.h"
+#include "MyRandom.h"
 
 
 Member::Member(Array<int> layerSizes): m_network(Network(NUM_INPUTS, layerSizes, NUM_OUTPUTS)) {
@@ -24,4 +25,18 @@ void Member::takeScore(double points){
 
 Network& Member::getNetwork(){
     return m_network;
+}
+
+void Member::mutate(int mutationRate){
+    MyRandom rnd = MyRandom();
+
+	Array<double> weights = getNetwork().getWeights();
+
+	for (unsigned int i = 0; i < weights.size(); i++) {
+		if (rnd.real(0, 1) < mutationRate) {
+			weights[i] = rnd.real(-1, 1);
+		}
+	}
+
+	getNetwork().setWeights(weights);
 }

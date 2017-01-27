@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 
 template <class Type>
 class Array {

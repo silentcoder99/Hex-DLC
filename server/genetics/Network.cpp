@@ -3,27 +3,12 @@
 #include <ctime>
 #include <iostream>
 
-Neuron::Neuron(int numInputs) : m_numWeights(numInputs + 1), m_weights(numInputs + 1) {
-	MyRandom rnd = MyRandom();
-
-	//std::cout << "Created neuron with weights:\n";
-	//Add weights
-	for (int i = 0; i < m_numWeights; i++) {
-		m_weights[i] = rnd.real(-1, 1);
-		//std::cout << m_weights[i] << "\n";
-	}
-	//std::cout << "\n";
+inline double sigmoid(double x) {
+	return 1 / (1 + exp(-x));
 }
 
-Layer::Layer(int numNeurons, int inputsPerNeuron): 
-	m_numNeurons(numNeurons),
-	m_inputsPerNeuron(inputsPerNeuron),
-	m_neurons(numNeurons){
-	//Add neurons
-	for (int i = 0; i < numNeurons; i++) {
-		m_neurons[i] = Neuron(inputsPerNeuron);
-	}
-}
+
+
 
 Network::Network(int numInputs, Array<int> layerSizes, int numOutputs) :
 	m_layerSizes(layerSizes),
@@ -58,23 +43,23 @@ Array<double> Network::getOutput(Array<double> inputs) {
 
 		Layer& currentLayer = m_layers[layerIndex];
 
-		output = Array<double>(currentLayer.m_neurons.size());
+		output = Array<double>(currentLayer.getNeuronCount());
 
-		for (int neuronIndex = 0; neuronIndex < currentLayer.m_neurons.size(); neuronIndex++) {
+		for (int neuronIndex = 0; neuronIndex < currentLayer.getNeuronCount(); neuronIndex++) {
 			//std::cout << "Generating Neuron Output:\n\n";
-			Neuron& currentNeuron = currentLayer.m_neurons[neuronIndex];
+			Neuron& currentNeuron = currentLayer.getNeuron(neuronIndex);
 			//Calculate activation
 			double activation = 0;
 
-			for (int i = 0; i < currentNeuron.m_numWeights - 1; i++) {
+			for (int i = 0; i < currentNeuron.getWeightCount() - 1; i++) {
 				//std::cout << "Generating Weighted Input:\n";
 				//std::cout << "Input: " << inputs[i] << ", Weight: " << neuron.m_weights[i];
 				//std::cout << ", Weighted Input: " << inputs[i] * neuron.m_weights[i] << "\n\n";
-				activation += inputs[i] * currentNeuron.m_weights[i];
+				activation += inputs[i] * currentNeuron.getWeight(i);
 			}
 
 			// Biased input
-			activation += currentNeuron.m_weights[currentNeuron.m_numWeights - 1];
+			activation += currentNeuron.getWeight(currentNeuron.getWeightCount() - 1);
 
 			//std::cout << "Neuron Output: " << sigmoid(activation) << "\n\n";
 			output[neuronIndex] = sigmoid(activation);
@@ -106,11 +91,11 @@ Array<double> Network::getWeights() {
 	for (int layerIndex = 0; layerIndex < m_layers.size(); layerIndex++) {
 		Layer& layer = m_layers[layerIndex];
 
-		for (int neuronIndex = 0; neuronIndex < layer.m_neurons.size(); neuronIndex++) {
-			Neuron& neuron = layer.m_neurons[neuronIndex];
+		for (int neuronIndex = 0; neuronIndex < layer.getNeuronCount(); neuronIndex++) {
+			Neuron& neuron = layer.getNeuron(neuronIndex);
 
-			for (int weightIndex = 0; weightIndex < neuron.m_weights.size(); weightIndex++) {
-				double weight = neuron.m_weights[weightIndex];
+			for (int weightIndex = 0; weightIndex < neuron.getWeightCount(); weightIndex++) {
+				double weight = neuron.getWeight(weightIndex);
 
 				weightCount++;
 			}
@@ -122,11 +107,11 @@ Array<double> Network::getWeights() {
 	for (int layerIndex = 0; layerIndex < m_layers.size(); layerIndex++) {
 		Layer& layer = m_layers[layerIndex];
 
-		for (int neuronIndex = 0; neuronIndex < layer.m_neurons.size(); neuronIndex++) {
-			Neuron& neuron = layer.m_neurons[neuronIndex];
+		for (int neuronIndex = 0; neuronIndex < layer.getNeuronCount(); neuronIndex++) {
+			Neuron& neuron = layer.getNeuron(neuronIndex);
 
-			for (int weightIndex = 0; weightIndex < neuron.m_weights.size(); weightIndex++) {
-				double weight = neuron.m_weights[weightIndex];
+			for (int weightIndex = 0; weightIndex < neuron.getWeightCount(); weightIndex++) {
+				double weight = neuron.getWeight(weightIndex);
 
 				weights[outputWeightIndex] = weight;
 				outputWeightIndex++;
@@ -145,18 +130,16 @@ void Network::setWeights(Array<double> weights) {
 	for (int layerIndex = 0; layerIndex < m_layers.size(); layerIndex++) {
 		Layer& layer = m_layers[layerIndex];
 
-		for (int neuronIndex = 0; neuronIndex < layer.m_neurons.size(); neuronIndex++) {
-			Neuron& neuron = layer.m_neurons[neuronIndex];
+		for (int neuronIndex = 0; neuronIndex < layer.getNeuronCount(); neuronIndex++) {
+			Neuron& neuron = layer.getNeuron(neuronIndex);
 
 			//std::cout << "Setting Neuron Weights:\n\n";
 
-			neuron.m_weights = Array<double>(neuron.m_numWeights);
-
 			//std::cout << "Clearing Neuron Weights" << neuron.m_weights.size() << "\n\n";
 
-			for (int i = 0; i < neuron.m_numWeights; i++) {
+			for (int i = 0; i < neuron.getWeightCount(); i++) {
 				//std::cout << "Pushing weight: " << weights[count] << "\n";
-				neuron.m_weights[i] = weights[count];
+				neuron.setWeight(i, weights[count]);
 				count++;
 			}
 			//std::cout << neuron.m_weights.size() << "\n";

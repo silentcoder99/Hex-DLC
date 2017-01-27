@@ -2,21 +2,8 @@
 #include <vector>
 #include <math.h>
 #include "util/SuperArray.hpp"
+#include "Layer.h"
 
-struct Neuron {
-	int m_numWeights;
-	Array<double> m_weights;
-	Neuron(int);
-	Neuron() {};
-};
-
-struct Layer {
-	int m_inputsPerNeuron;
-	int m_numNeurons;
-	Array<Neuron> m_neurons;
-	Layer(int, int);
-	Layer() {};
-};
 
 class Network {
 	int m_numInputs;
@@ -33,6 +20,4 @@ public:
 	Array<int> getLayerSizes();
 };
 
-inline double sigmoid(double x) {
-	return 1 / (1 + exp(-x));
-}
+

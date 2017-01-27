@@ -11,6 +11,8 @@ set (SERVER_SRC
 	server/genetics/TournamentSelection.cpp
     server/genetics/Member.cpp
 	server/genetics/Network.cpp
+    server/genetics/Neuron.cpp
+    server/genetics/Layer.cpp
 
     server/Logger.cpp
     server/log/STDOutLogger.cpp
@@ -32,6 +34,8 @@ set (SERVER_HEADER
 	server/genetics/TournamentSelection.h
 	server/genetics/SelectionAlgorithm.h
 	server/genetics/Network.h
+    server/genetics/Neuron.h
+    server/genetics/Layer.h
 
     server/Logger.h
     server/log/STDOutLogger.h

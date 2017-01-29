@@ -1,4 +1,4 @@
-#include "util/SuperArray.hpp"
+#include "util/FastArray.h"
 #include "Neuron.h"
 
 class Layer {

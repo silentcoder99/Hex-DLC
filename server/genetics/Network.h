@@ -1,7 +1,7 @@
 #pragma once 
 #include <vector>
 #include <math.h>
-#include "util/SuperArray.hpp"
+#include "util/FastArray.h"
 #include "Layer.h"
 
 

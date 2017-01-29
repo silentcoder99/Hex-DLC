@@ -1,4 +1,4 @@
-#include "util/SuperArray.hpp"
+#include "util/FastArray.h"
 
 
 class Neuron{

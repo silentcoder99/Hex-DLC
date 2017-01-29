@@ -26,7 +26,7 @@ set (SERVER_SRC
 
 set (SERVER_HEADER
 	server/util/FileIO.h
-	server/util/SuperArray.hpp
+	server/util/FastArray.h
 	server/util/Vec2.hpp
 
 	server/genetics/GAlgorithm.h

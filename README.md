@@ -63,3 +63,25 @@ Then you should have the two excecutable files! Run with
 ./Hex-DLCServer
 ./Hex-DLCClient
 ```
+
+## Interacting with the server
+The client can be called as follows:
+
+```bash
+HexDLCClient <serverIP> <command> [<arguments>]
+```
+
+The current command are:
+
+- `champ` Returns the current champion's weights
+- `stop` Halts the server
+- `genCount` Returns the current generation number
+- `setGenCount <number>` Sets the generation count to the given number
+- `population` Returns the entire current population
+- `setPopulation` Sets the population from into STDIN 
+- `runTime` Returns the time it takes to evolve a single generation in seconds
+- `getMatch` Returns a printout of a match running on the server
+
+## Using the bots
+The Bot.hex file can read weights given to it and play on [retroverse's](https://github.com/retroverse) Hex [Site](http://ewanb.me/Hex/). To use a player from the server, get a champ and paste the comma seperated values into the array named championWeights and remove the final comma, then paste it into the site and run the bot!
+

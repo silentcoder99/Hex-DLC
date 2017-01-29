@@ -5,16 +5,16 @@ This is a server and a client designed to generate weights for a Neuron network 
 
 ## Building
 ### Building on your computer
-To build this you will need CMake and Boost.
+To build this you will need [CMake](https://cmake.org/) and [Boost](http://www.boost.org/).
 
-Once you have cloned the repository, update the websockets submodule
+Once you have cloned the repository, update the websockets and xml submodule
 
 ```bash
 git submodule init
 git submodule update
 ```
 
-Then create a directory called build and run CMake in that directory
+Then create a directory and run CMake in that directory
 
 ```bash
 mkdir build
@@ -63,9 +63,3 @@ Then you should have the two excecutable files! Run with
 ./Hex-DLCServer
 ./Hex-DLCClient
 ```
-
-You should have a server hosted on the virtual machine AND the host (Due to port forwarding). If you want to exit the machine, Use `exit`.
-
-Running `./Hex-DLCServer &` will fork the server so that you can still use the terminal.
-
-`vagrant halt` from outside the vm will shutdown the machine. `vagrant destroy` will destroy the vm.

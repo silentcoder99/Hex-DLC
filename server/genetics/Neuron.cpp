@@ -7,7 +7,7 @@ Neuron::Neuron(int numInputs) : m_weights(numInputs + 1) {
 
 	//std::cout << "Created neuron with weights:\n";
 	//Add weights
-	for (int i = 0; i < m_numWeights; i++) {
+	for (int i = 0; i < m_weights.size(); i++) {
 		m_weights[i] = rnd.real(-1, 1);
 		//std::cout << m_weights[i] << "\n";
 	}

@@ -2,7 +2,6 @@
 
 
 class Neuron{
-    int m_numWeights;
     Array<double> m_weights;
 public:
     Neuron(int numInputs);

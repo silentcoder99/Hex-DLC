@@ -90,4 +90,7 @@ int main(int argc, char* argv[]) {
 			std::cout << e.what() << std::endl;
 		}
 	}
+    else{
+        std::cout << "Usage: HexDLCClient URL command [arguments]" << std::endl;
+    }
 }

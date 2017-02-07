@@ -1,4 +1,4 @@
-#include "GAlgorithm.h"
+#include "Population.h"
 #include "Game.h"
 #include "MyRandom.h"
 #include <math.h>

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "genetics/GAlgorithm.h"
+#include "FastArray.h"
 
 class FileIO {
 public:

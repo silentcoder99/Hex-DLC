@@ -13,7 +13,7 @@ endif()
 set (SERVER_SRC
 	server/util/FileIO.cpp
 
-	server/genetics/GAlgorithm.cpp
+	server/genetics/Population.cpp
 	server/genetics/TournamentSelection.cpp
     server/genetics/Member.cpp
 	server/genetics/Network.cpp
@@ -35,7 +35,7 @@ set (SERVER_HEADER
 	server/util/FastArray.h
 	server/util/Vec2.hpp
 
-	server/genetics/GAlgorithm.h
+	server/genetics/Population.h
 	server/genetics/Member.h
 	server/genetics/TournamentSelection.h
 	server/genetics/SelectionAlgorithm.h

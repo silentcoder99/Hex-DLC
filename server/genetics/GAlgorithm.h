@@ -9,7 +9,7 @@
 #define POP_SIZE 50
 #define TOURNAMENT_SIZE 2
 #define ELITISM_SIZE 1 //Number of top AI's to make it to the next generation
-#define MUTATION_RATE 0.2
+#define MUTATION_RATE 0.2 // Interpreted as a percentage of weights changed per generation
 #define WIN_REWARD 1
 #define INVALID_MOVE_PENALTY 0
 

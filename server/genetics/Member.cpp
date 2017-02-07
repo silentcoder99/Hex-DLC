@@ -33,7 +33,7 @@ void Member::mutate(int mutationRate){
 	Array<double> weights = getNetwork().getWeights();
 
 	for (unsigned int i = 0; i < weights.size(); i++) {
-		if (rnd.real(0, 1) < mutationRate) {
+		if (rnd.real(0, 1) < ( mutationRate / 100.0 )) {
 			weights[i] = rnd.real(-1, 1);
 		}
 	}

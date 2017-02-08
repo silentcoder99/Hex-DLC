@@ -1,6 +1,6 @@
 [submodule "external/websocketpp"]
 	path = external/websocketpp
 	url = https://github.com/zaphoyd/websocketpp.git
-[submodule "external/pugixml"]
-	path = external/pugixml
+[submodule "server/external/pugixml"]
+	path = server/external/pugixml
 	url = https://github.com/zeux/pugixml.git

@@ -1,5 +1,7 @@
 #include "CommandLineOptions.h"
 
+namespace po = boost::program_options;
+
 CommandLineOptions* CommandLineOptions::instance = nullptr;
 
 CommandLineOptions* CommandLineOptions::getInstance(){
@@ -9,15 +11,22 @@ CommandLineOptions* CommandLineOptions::getInstance(){
     return instance;
 }
 
-
-void CommandLineOptions::setOptions(int argc,const char* argv[]){
-    
+CommandLineOptions::CommandLineOptions(){
+   m_desc.add_options()
+      ("help", "produce help message");
 }
 
-bool CommandLineOptions::argumentsValid(){
-    return false;
+
+void CommandLineOptions::setOptions(int argc,const char* argv[]){
+    try{
+    po::store(po::parse_command_line(argc, argv, m_desc), m_optionsGiven);
+    }
+    catch(po::unknown_option& e){
+        throw UnknownOptionException("Unkown option: " + e.get_option_name());
+    }
+    po::notify(m_optionsGiven);
 }
 
 bool CommandLineOptions::helpRequested(){
-    return false;
+    return m_optionsGiven.count("help");
 }

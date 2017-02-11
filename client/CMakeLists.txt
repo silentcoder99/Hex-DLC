@@ -26,8 +26,18 @@ set(CLIENT_SRC
 set(CLIENT_HEADER
     src/CommandLineOptions.h)
 
+
+# Test Source Files
 set(CLIENT_TEST_SRC
+
+    # Tested files
+    src/CommandLineOptions.cpp
+    
     test/CommandLineOptionsTest.cpp)
+
+set(CLIENT_TEST_HEADER
+
+    src/CommandLineOptions.h)
 
 # External libraries, Websockets and XML
 include_directories("../external/websocketpp")
@@ -49,6 +59,8 @@ set (WEBSOCKET_BOOST_LIBS
 set (HEXDLCLIENT_BOOST_LIBS
     program_options)
 
+include_directories("src")
+
 # Look for boost
 find_package( Boost 1.40 COMPONENTS ${HEXDLCLIENT_BOOST_LIBS} ${WEBSOCKET_BOOST_LIBS} REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
@@ -57,5 +69,9 @@ include_directories(${Boost_INCLUDE_DIR})
 find_package( Threads )
 
 # Create client and link required libraries
-add_executable(Hex-DLCClient ${CLIENT_SRC})
+add_executable(Hex-DLCClient ${CLIENT_SRC} ${CLIENT_HEADER})
 target_link_libraries(Hex-DLCClient ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+# Create test executable
+add_executable(Hex-DLCClientTest ${CLIENT_TEST_SRC} ${CLIENT_TEST_HEADER})
+target_link_libraries(Hex-DLCClientTest ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

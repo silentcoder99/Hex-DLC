@@ -17,12 +17,12 @@ CommandLineOptions::CommandLineOptions(){
 }
 
 
-void CommandLineOptions::setOptions(int argc,const char* argv[]){
+void CommandLineOptions::setOptions(int argc,char* argv[]){
     try{
     po::store(po::parse_command_line(argc, argv, m_desc), m_optionsGiven);
     }
     catch(po::unknown_option& e){
-        throw UnknownOptionException("Unkown option: " + e.get_option_name());
+        throw UnknownOptionException(e.get_option_name());
     }
     po::notify(m_optionsGiven);
 }

@@ -1,5 +1,6 @@
 #include <boost/program_options.hpp>
-#include <sstream>
+#include <exception>
+#include <stdexcept>
 
 /*
  * Command Line options
@@ -14,10 +15,16 @@ protected:
     CommandLineOptions();
 public:
     static CommandLineOptions* getInstance();
-    void setOptions(int argc,const char* argv[]);
+    void setOptions(int argc,char* argv[]);
     bool argumentsValid();
     bool helpRequested();    
 };
+
+
+
+/* 
+ * Errors that can be thrown when running this class
+ */
 
 class UnknownOptionException : public std::runtime_error {
 
@@ -25,20 +32,18 @@ public:
     UnknownOptionException(std::string option)
         : runtime_error("Invalid option given"){
         m_option = option;
+        m_message = std::string(runtime_error::what()) + ": " + option;
     }
 
     virtual const char* what() const throw(){
-        std::ostringstream ss;
-        ss.str("");
+        return m_message.c_str();
 
-        ss << runtime_error::what() << ": " << m_option;
-        return ss.str().c_str();
     }
 
     std::string getUnkownOption(){
         return m_option;
     }
 private:
-
+    std::string m_message;
     std::string m_option;
 };

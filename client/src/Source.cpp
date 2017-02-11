@@ -4,6 +4,11 @@
 #include <iostream>
 #include <sstream>
 
+#include "CommandLineOptions.h"
+
+
+#define USAGE_MESSAGE "Usage: HexDLCClient URL command [arguments]"
+
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
 using websocketpp::lib::placeholders::_1;
@@ -42,8 +47,23 @@ void on_message(client* c, websocketpp::connection_hdl hdl, message_ptr msg) {
 }
 
 int main(int argc, char* argv[]) {
-	// Create a client endpoint
+
 	client c;
+
+
+    CommandLineOptions* clo = CommandLineOptions::getInstance();
+    try{
+    clo->setOptions(argc,argv);
+    }
+    catch(UnknownOptionException &e){
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
+
+    if(clo->helpRequested()){
+        std::cerr << USAGE_MESSAGE << std::endl;
+        return 0;
+    }
 
 	std::string uri = "ws://localhost:20046";
 
@@ -87,10 +107,11 @@ int main(int argc, char* argv[]) {
 			c.run();
 		}
 		catch (websocketpp::exception const & e) {
-			std::cout << e.what() << std::endl;
+			std::cerr << e.what() << std::endl;
 		}
 	}
     else{
-        std::cout << "Usage: HexDLCClient URL command [arguments]" << std::endl;
+        std::cerr << USAGE_MESSAGE << std::endl;
+        return 1;
     }
 }

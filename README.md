@@ -66,9 +66,9 @@ Then you should have the two excecutable files! Run with
 
 ## Docker
 A container for this project can be found at `hazelfire/hex-dlc` run the container with
-``bash
+```bash
 docker run -d --name hexdlc -p 20046:20046 hazelfire/hex-dlc
-``
+```
 
 ## Interacting with the server
 The client can be called as follows:

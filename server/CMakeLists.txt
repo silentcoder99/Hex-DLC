@@ -66,7 +66,7 @@ set(SERVER_TEST_SRC
 
 
 # External libraries, Websockets and XML
-include_directories("../external/Simple-Web-Server")
+include_directories("external/Simple-Web-Server")
 include_directories("external/pugixml/src")
 
 # Build pugixml as well

@@ -1,23 +1,23 @@
 #pragma once
 
-#include <websocketpp/config/asio_no_tls.hpp>
-#include <websocketpp/server.hpp>
+#include <server_http.hpp>
 
 #include "HexDLC.h"
 
 #define SERVER_PORT 20046
 
-typedef websocketpp::server<websocketpp::config::asio> WebsocketServer;
+typedef SimpleWeb::Server<SimpleWeb::HTTP> HttpServer;
 
 class DLCServer {
 public:
 	void start();
 
 private:
-	void onMessage(websocketpp::connection_hdl hdl, WebsocketServer::message_ptr msg);
 	HexDLC mHexDLC;
 
+    std::string makeResponse(std::string status, std::string content);
+
 	bool mServerRunning;
-	WebsocketServer mServer;
+	HttpServer mServer;
 
 };

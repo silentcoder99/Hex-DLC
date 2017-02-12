@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(Hex-DLCServer)
 
 # Use C++ 11 when compiling
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
 
 # Export all the command line options used to compile
 # Application. This is useful if you are using ycm
@@ -66,7 +66,7 @@ set(SERVER_TEST_SRC
 
 
 # External libraries, Websockets and XML
-include_directories("../external/websocketpp")
+include_directories("../external/Simple-Web-Server")
 include_directories("external/pugixml/src")
 
 # Build pugixml as well
@@ -78,7 +78,7 @@ set(Boost_USE_MULTITHREADED	ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
 # Libraries required for websockets
-set (WEBSOCKET_BOOST_LIBS
+set (REST_BOOST_LIBS
 	system
 	chrono
 	regex
@@ -91,7 +91,7 @@ set (HEXDLC_BOOST_LIBS
     program_options)
 
 # Look for boost
-find_package( Boost 1.40 COMPONENTS ${HEXDLC_BOOST_LIBS} ${WEBSOCKET_BOOST_LIBS} REQUIRED)
+find_package( Boost 1.40 COMPONENTS ${HEXDLC_BOOST_LIBS} ${REST_BOOST_LIBS} REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 # Look for threading libraries

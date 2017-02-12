@@ -60,8 +60,7 @@ make
 Then you should have the two excecutable files! Run with
 
 ```bash
-./Hex-DLCServer
-./Hex-DLCClient
+./server/Hex-DLCServer
 ```
 
 ## Docker
@@ -71,20 +70,15 @@ docker run -d --name hexdlc -p 20046:20046 hazelfire/hex-dlc
 ```
 
 ## Interacting with the server
-The client can be called as follows:
+The server can be accessed via it's REST interface.
 
-```bash
-HexDLCClient <serverIP> <command> [<arguments>]
-```
+After running the server, navigate to `localhost:20046/<reqeust>`
 
-The current command are:
+Where request can be:
 
 - `champ` Returns the current champion's weights
-- `stop` Halts the server
 - `genCount` Returns the current generation number
-- `setGenCount <number>` Sets the generation count to the given number
 - `population` Returns the entire current population
-- `setPopulation` Sets the population from into STDIN 
 - `runTime` Returns the time it takes to evolve a single generation in seconds
 - `getMatch` Returns a printout of a match running on the server
 

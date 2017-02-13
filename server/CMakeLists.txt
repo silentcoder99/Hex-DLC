@@ -2,9 +2,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(Hex-DLCServer)
 
-# Use C++ 11 when compiling
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
-
 # Export all the command line options used to compile
 # Application. This is useful if you are using ycm
 # Vim completion enging
@@ -14,7 +11,10 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+   # Use C++ 11 when compiling
+   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
 
 # Source files

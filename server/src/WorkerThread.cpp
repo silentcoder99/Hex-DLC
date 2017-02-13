@@ -4,7 +4,7 @@ WorkerThread::WorkerThread(ThreadSafeStack<std::function<void()> >& taskStack) :
 	mTaskStack(taskStack) {
 
 	mThread = boost::thread([this]() {
-		while (!mTaskStack.size() != 0) {
+		while (mTaskStack.size() != 0) {
 			std::function<void()> task = mTaskStack.pop();
 			task();
 		}

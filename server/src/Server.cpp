@@ -50,11 +50,6 @@ void DLCServer::start() {
         *response << makeResponse("200 OK", runTime);
     };
 
-    mServer.resource["^/getmatch$"]["GET"] = [this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request){
-        std::string match = mHexDLC.getMatch();
-        *response << makeResponse("200 OK", match);
-    };
-
 	boost::thread([this]() {
         mServer.start();
     });

@@ -79,11 +79,3 @@ std::string HexDLC::getState()
 {
 	return m_population.save();
 }
-
-std::string HexDLC::getMatch()
-{
-	Member champion = getChampion();
-	std::stringstream ss;
-	m_population.startMatch(champion, champion, &ss);
-	return ss.str();
-}

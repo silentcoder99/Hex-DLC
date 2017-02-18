@@ -23,6 +23,7 @@ set (SERVER_SRC
 	src/util/FileIO.cpp
 
 	src/genetics/Population.cpp
+    src/genetics/Match.cpp
 	src/genetics/TournamentSelection.cpp
     src/genetics/Member.cpp
 	src/genetics/Network.cpp
@@ -45,6 +46,7 @@ set (SERVER_HEADER
 	src/util/Vec2.hpp
 
 	src/genetics/Population.h
+    src/genetics/Match.h
 	src/genetics/Member.h
 	src/genetics/TournamentSelection.h
 	src/genetics/SelectionAlgorithm.h

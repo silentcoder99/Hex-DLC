@@ -43,7 +43,6 @@ class Population {
 	pugi::xml_node saveMember(Member);
 
 public:
-	int startMatch(Member&, Member&, std::ostream* = nullptr);
 	void sortMembers(int start = 0, int end = (POP_SIZE - 1));
 	void scoreMembers();
 	Population();

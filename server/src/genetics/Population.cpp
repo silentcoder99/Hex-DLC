@@ -1,5 +1,5 @@
 #include "Population.h"
-#include "Game.h"
+#include "Match.h"
 #include "MyRandom.h"
 #include <math.h>
 #include <iostream>
@@ -132,106 +132,18 @@ void Population::load(std::string package) {
 
 }
 
-int Population::startMatch(Member& player1, Member& player2, std::ostream* outStream) {
-	Board board = Board();
-
-	while (board.getWinner() == 0) {
-		Array<double> input(BOARD_SIZE * BOARD_SIZE);
-		boardArray rawBoard = board.getBoard();
-
-		//Convert the board to a list
-		for (int i = 0; i < BOARD_SIZE; i++) {
-			for (int j = 0; j < BOARD_SIZE; j++) {
-				//Player 1
-				if (board.getCurrentPlayer() == 1) {
-					if (rawBoard[i][j] == 0) {
-						input[i * 11 + j] = 0;
-					}
-					else if (rawBoard[i][j] == 1) {
-						input[i * 11 + j] = 1;
-					}
-					else if (rawBoard[i][j] == 2) {
-						input[i * 11 + j] = -1;
-					}
-				}
-				//Player 2
-				else {
-					//Reflect board along the line y = x for player 2
-					int value = rawBoard[-j + BOARD_SIZE - 1][-i + BOARD_SIZE - 1];
-
-					//Swap values so they see their moves as '1'
-					if (value == 1) { value = -1; }
-					else if (value == 2) { value = 1; }
-
-					input[i * 11 + j] = value;
-				}
-			}
-		}
-
-		//Calculate and perform move
-
-		Array<double> output(NUM_OUTPUTS);
-
-		if (board.getCurrentPlayer() == 1) {
-			// Get Output
-			output = player1.getNetwork().getOutput(input);
-
-			//Convert from decimal to integer output
-			output[0] = floor(output[0] * BOARD_SIZE);
-			output[1] = floor(output[1] * BOARD_SIZE);
-		}
-		else if (board.getCurrentPlayer() == 2) {
-			// Get Output
-			output = player2.getNetwork().getOutput(input);
-
-			//Convert from decimal to integer output
-			output[0] = floor(output[0] * BOARD_SIZE);
-			output[1] = floor(output[1] * BOARD_SIZE);
-
-			//Reflect player 2's move (as they see everything reflected)
-			output[0] = -output[1] + BOARD_SIZE - 1;
-			output[1] = -output[0] + BOARD_SIZE - 1;
-		}
-
-		Vec2 chosenPosition = Vec2((int)output[0], (int)output[1]);
-
-		//If hex is taken, take nearest empty hex
-		if (board.getValue(chosenPosition) != 0) {
-			Vec2 emptyPos = board.findNearestEmpty(chosenPosition);
-			chosenPosition = emptyPos;
-
-			// If we are printing, don't apply penalties, blank match
-			if (!outStream) {
-				//Penalize player for performing an illegal move
-				if (board.getCurrentPlayer() == 1) {
-					player1.takeScore(m_invalidMovePenalty);
-				}
-				else if (board.getCurrentPlayer() == 2) {
-					player2.takeScore(m_invalidMovePenalty);
-				}
-			}
-		}
-
-		board.performMove(chosenPosition);
-
-		if (outStream) {
-			*outStream << board.toString();
-		}
-
-	}
-	return board.getWinner();
-}
-
 void Population::scoreMembers() {
 
 	ThreadSafeStack<std::function<void()>> taskStack;
 
 	//Each player plays all players above them (P2 plays P3, P4, P5, etc.)
-	for (int i = 0; i < m_members.size(); i++) {
-		for (int j = i + 1; j < m_members.size(); j++) {
+	for (unsigned int i = 0; i < m_members.size(); i++) {
+		for (unsigned int j = i + 1; j < m_members.size(); j++) {
 			//Award AI's for winning
 			taskStack.push([this, i, j]() {
-				if (startMatch(m_members[i], m_members[j]) == 1) {
+                Match match(m_members[i], m_members[j]);
+                match.setInvalidMovePenalty(m_invalidMovePenalty);
+				if (match.getWinner() == 1) {
 					m_members[i].addScore(m_winReward);
 				}
 				else {
@@ -296,7 +208,7 @@ std::pair<Member, Member> Population::crossover(Member member1, Member member2) 
 	Array<double> firstWeights = member1.getNetwork().getWeights();
 	Array<double> secondWeights = member2.getNetwork().getWeights();
 
-	for (unsigned int i = 0; i < firstWeights.size(); i++) {
+	for (int i = 0; i < firstWeights.size(); i++) {
 		if (rnd.integer(2) == 1) {
 			double temp = secondWeights[i];
 			secondWeights[i] = firstWeights[i];
@@ -324,7 +236,7 @@ void Population::evolve() {
     TournamentSelection selectionAlgorithm(m_members, m_tournamentSize);
 
 	// Create children
-	for (int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
+	for (unsigned int childIndex = 0; childIndex < m_members.size() - m_elitismSize; childIndex++) {
 		Member& parent1 = selectionAlgorithm.select();
 		Member& parent2 = selectionAlgorithm.select();
 		std::pair<Member, Member> children = Population::crossover(parent1, parent2);
@@ -336,7 +248,7 @@ void Population::evolve() {
 	}
 
 	// Add children to population
-	for (int popIndex = 0; popIndex < childGeneration.size(); popIndex++) {
+	for (unsigned int popIndex = 0; popIndex < childGeneration.size(); popIndex++) {
 		setMember(childGeneration[popIndex], popIndex);
 	}
 
@@ -344,9 +256,6 @@ void Population::evolve() {
 	for (int i = 0; i < POP_SIZE; i++) {
 		getMember(i).mutate(m_mutationRate);
 	}
-
-	// Increment generation
-	m_generationCount++;
 }
 
 unsigned long Population::getGenerationCount() {

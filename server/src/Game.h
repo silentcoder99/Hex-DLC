@@ -9,6 +9,12 @@
 
 typedef std::array<std::array<int, BOARD_SIZE>, BOARD_SIZE> boardArray;
 
+enum Player{
+    PlayerNone = 0,
+    Player1 = 1,
+    Player2 = 2
+};
+
 struct Hex {
 	Hex(Vec2 pos, int);
 	bool operator<(Hex other) const{
